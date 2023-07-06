@@ -8,7 +8,7 @@ use regex::Regex;
 
 mod hentaigana_dicts;
 
-const APP_ID: &str = "org.gtk_rs.HelloWorld2";
+const APP_ID: &str = "org.gtk_rs.Hentaigana_Input";
 
 fn main() -> glib::ExitCode {
     let app = Application::builder().application_id(APP_ID).build();

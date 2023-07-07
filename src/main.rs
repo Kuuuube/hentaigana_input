@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use gtk4 as gtk;
-use gtk::{prelude::*, glib, Application, ApplicationWindow, TextView, Box, Label, EventControllerKey, ScrolledWindow};
+use gtk::{prelude::*, glib, Application, ApplicationWindow, TextView, Box, Label, EventControllerKey, ScrolledWindow, HeaderBar, Button};
 use gtk::gdk::Display;
 
 use regex::Regex;
@@ -22,6 +22,9 @@ fn main() -> glib::ExitCode {
 }
 
 fn build_ui(app: &Application) {
+    let gtk_settings = gtk::Settings::default().unwrap();
+    gtk::Settings::set_gtk_application_prefer_dark_theme(&gtk_settings, true);
+
     load_css();
 
     let textbox = TextView::builder()
@@ -108,40 +111,62 @@ fn build_ui(app: &Application) {
     });
     textbox.add_controller(press_controller);
 
-    let gtkbox = Box::new(gtk::Orientation::Horizontal, 12);
+    let dark_light_button = Button::builder()
+        .label("Light/Dark Theme")
+        .build();
 
-    gtkbox.set_margin_top(12);
-    gtkbox.set_margin_bottom(12);
-    gtkbox.set_margin_start(12);
-    gtkbox.set_margin_end(12);
+    let gtk_settings_clone = gtk_settings.clone();
+    dark_light_button.connect_clicked(move |_dark_light_button| {
+        if gtk::Settings::is_gtk_application_prefer_dark_theme(&gtk_settings_clone) {
+            gtk::Settings::set_gtk_application_prefer_dark_theme(&gtk_settings_clone, false);
+        } else {
+            gtk::Settings::set_gtk_application_prefer_dark_theme(&gtk_settings_clone, true);
+        }
+    });
+
+    let title_label = Label::builder()
+        .name("titlelabel")
+        .label("𛂸𛄞𛁡𛀇𛀡゙𛁾 𛂍𛃤𛀊𛃴𛃪𛀬")
+        .build();
+
+    let headerbar = HeaderBar::builder()
+        .title_widget(&title_label)
+        .build();
+
+    headerbar.pack_start(&dark_light_button);
+
+    let contentbox = Box::new(gtk::Orientation::Horizontal, 12);
+
+    contentbox.set_margin_top(12);
+    contentbox.set_margin_bottom(12);
+    contentbox.set_margin_start(12);
+    contentbox.set_margin_end(12);
 
     let leftscrollbox = ScrolledWindow::builder()
-    .child(&textbox)
-    .build();
+        .child(&textbox)
+        .build();
 
     let leftbox = Box::new(gtk::Orientation::Vertical, 12);
     leftbox.append(&leftscrollbox);
-    gtkbox.append(&leftbox);
+    contentbox.append(&leftbox);
 
     let primaryrightscrollbox = ScrolledWindow::builder()
-    .child(&primarylabels)
-    .build();
+        .child(&primarylabels)
+        .build();
 
     let secondaryrightscrollbox = ScrolledWindow::builder()
-    .child(&secondarylabels)
-    .build();
+        .child(&secondarylabels)
+        .build();
 
     let rightbox = Box::new(gtk::Orientation::Horizontal, 12);
     rightbox.append(&primaryrightscrollbox);
     rightbox.append(&secondaryrightscrollbox);
-    gtkbox.append(&rightbox);
+    contentbox.append(&rightbox);
 
     let window = ApplicationWindow::builder()
         .application(app)
-        .title("𛂸𛄞𛁡𛀇𛀡゙𛁾 𛂍𛃤𛀊𛃴𛃪𛀬")
-        .child(&gtkbox)
+        .child(&contentbox)
         .build();
-
 
     let window_size = (960, 600);
     window.set_default_size(window_size.0, window_size.1);
@@ -149,6 +174,8 @@ fn build_ui(app: &Application) {
     leftscrollbox.set_size_request((window_size.0 as f64 * 0.6667) as i32, window_size.1);
     primaryrightscrollbox.set_size_request((window_size.0 as f64 * 0.1667) as i32, window_size.1);
     secondaryrightscrollbox.set_size_request((window_size.0 as f64 * 0.1667) as i32, window_size.1);
+
+    window.set_titlebar(Some(&headerbar));
 
     window.present();
 }

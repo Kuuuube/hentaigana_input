@@ -88,7 +88,8 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("#", "カ"),
         ("$", "ヵ"),
         ("%", "ｶ"),
-        ("^", "🈀"),
+        ("^", "ヶ"),
+        ("&", "🈀"),
     ]);
 
     let ki_dict: BTreeMap<&str, &str> = BTreeMap::from([
@@ -671,32 +672,97 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("1", "ゟ"),
     ]);
 
+    let koto_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "ヿ"),
+    ]);
+
+    let shime_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "〆"),
+    ]);
+
+    let tomo_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "𪜈"),
+    ]);
+
+    let shite_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "𬼀"),
+    ]);
+
+    let masu_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "〼"),
+    ]);
+
+    let nari_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "𬼂"),
+        ("2", "𬻿"),
+    ]);
+
+    let iter_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("1", "々"),
+        ("2", "〻"),
+        ("3", "ゝ"),
+        ("4", "ゞ"),
+        ("5", "ゝ゚"),
+        ("6", "ヽ"),
+        ("7", "ヾ"),
+        ("8", "〱"),
+        ("9", "〲"),
+        ("0", "〱゚"),
+        ("-", "〳"),
+        ("=", "〴"),
+        ("!", "〵"),
+        ("@", "／＼"),
+        ("#", "〃"),
+    ]);
+
     let brackets_dict: BTreeMap<&str, &str> = BTreeMap::from([
         ("1", "＜＞"),
         ("2", "『』"),
         ("3", "【】"),
         ("4", "“”"),
         ("5", "〝〟"),
-        ("6", "｛｝"),
-        ("7", "「」"),
-        ("8", "《》"),
-        ("9", "｛｝"),
-        ("0", "≪≫"),
-        ("-", "〔〕"),
-        ("=", "‹›"),
-        ("!", "«»"),
-        ("@", "｟｠"),
-        ("#", "〈〉"),
+        ("6", "〝〞"),
+        ("7", "｛｝"),
+        ("8", "「」"),
+        ("9", "《》"),
+        ("0", "｛｝"),
+        ("-", "≪≫"),
+        ("=", "〔〕"),
+        ("!", "‹›"),
+        ("@", "«»"),
+        ("#", "｟｠"),
+        ("$", "〈〉"),
         ("%", "〖〗"),
         ("^", "〘〙"),
+    ]);
+
+    let dashes_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("!", "ー"),
+        ("@", "ｰ"),
+        ("#", "〰"),
+        ("$", "〜"),
+        ("%", "―"),
+        ("^", "～"),
+        ("&", "￣"),
+        ("*", "⁻"),
+        ("(", "₋"),
+        (")", "-"),
+        ("〽", "_")
     ]);
 
     let dots_dict: BTreeMap<&str, &str> = BTreeMap::from([
         ("!", "゙"),
         ("@", "゚"),
         ("#", "゛"),
-        ("%", "゜"),
-        ("^", "・"),
+        ("$", "゜"),
+        ("%", "・"),
+        ("^", "、"),
+        ("&", "。"),
+        ("^", "、"),
+    ]);
+
+    let dhyphen_dict: BTreeMap<&str, &str> = BTreeMap::from([
+        ("!", "゠"),
     ]);
 
     let romaji_dict: BTreeMap<&str, &BTreeMap<&str, &str>> = BTreeMap::from ([
@@ -790,6 +856,19 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("ve", &we_dict),
         ("vo", &wo_dict),
         ("yori", &yori_dict),
+        ("koto", &koto_dict),
+        ("shime", &shime_dict),
+        ("tomo", &tomo_dict),
+        ("goto", &koto_dict),
+        ("shite", &shite_dict),
+        ("masu", &masu_dict),
+        ("nari", &nari_dict),
+        ("iter", &iter_dict),
+        ("noma", &iter_dict),
+        ("rep", &iter_dict),
+        ("kuno", &iter_dict),
+        ("choo", &iter_dict),
+        ("odor", &iter_dict),
         ("(", &brackets_dict),
         (")", &brackets_dict),
         ("<", &brackets_dict),
@@ -800,6 +879,9 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("\'", &brackets_dict),
         (".", &dots_dict),
         (",", &dots_dict),
+        ("-", &dashes_dict),
+        ("~", &dashes_dict),
+        ("=", &dhyphen_dict)
     ]);
 
     let output_dict = match romaji_dict.get(romaji) {
@@ -807,7 +889,7 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         None => BTreeMap::default()
     };
 
-    let dakuten = vec!["ga", "gi", "gu", "ge", "go", "za", "ji", "zi", "zu", "ze", "zo", "da", "di", "du", "de", "do", "ba", "bi", "bu", "be", "bo", "vu"];
+    let dakuten = vec!["ga", "gi", "gu", "ge", "go", "za", "ji", "zi", "zu", "ze", "zo", "da", "di", "du", "de", "do", "ba", "bi", "bu", "be", "bo", "vu", "goto"];
     if dakuten.contains(&romaji) {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
@@ -844,7 +926,7 @@ fn get_hentaigana(romaji: &str, variant: &str) -> String {
 }
 
 pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (String, String) {
-    let regex_matches = vec![safe_regex_match(r".{4}$", &current_text), safe_regex_match(r".{3}$", &current_text), safe_regex_match(r".{2}$", &current_text), safe_regex_match(r".$", &current_text)];
+    let regex_matches = vec![safe_regex_match(r".{5}$", &current_text), safe_regex_match(r".{4}$", &current_text), safe_regex_match(r".{3}$", &current_text), safe_regex_match(r".{2}$", &current_text), safe_regex_match(r".$", &current_text)];
     for regex_match in regex_matches {
         let hentaigana_group = get_hentaigana_group(&regex_match);
         if hentaigana_group != BTreeMap::default() {
@@ -859,7 +941,7 @@ pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (St
 }
 
 pub fn get_hentaigana_display(current_text: String) -> (String, String) {
-    let regex_matches = vec![safe_regex_match(r".{1,4}$", &current_text), safe_regex_match(r".{1,3}$", &current_text), safe_regex_match(r".{1,2}$", &current_text), safe_regex_match(r".$", &current_text)];
+    let regex_matches = vec![safe_regex_match(r".{5}$", &current_text), safe_regex_match(r".{4}$", &current_text), safe_regex_match(r".{3}$", &current_text), safe_regex_match(r".{2}$", &current_text), safe_regex_match(r".$", &current_text)];
 
     for regex_match in regex_matches {
         let hentaigana_group = get_hentaigana_group(&regex_match);

@@ -1,7 +1,7 @@
 #![windows_subsystem = "windows"]
 
 use gtk4 as gtk;
-use gtk::{prelude::*, glib, Application, ApplicationWindow, TextView, Box, Label, EventControllerKey};
+use gtk::{prelude::*, glib, Application, ApplicationWindow, TextView, Box, Label, EventControllerKey, ScrolledWindow};
 use gtk::gdk::Display;
 
 use regex::Regex;
@@ -28,7 +28,7 @@ fn build_ui(app: &Application) {
 
     let labels = Label::builder().build();
 
-    labels.set_markup("<span font-family='BabelStone Han' size='30000'>hentaigana!</span>");
+    labels.set_markup("<span font-family='BabelStone Han' size='29000'>変\n体\nが\nな\n！</span>");
 
     let labels_clone = labels.clone();
     let textbox_clone = textbox.clone();
@@ -38,7 +38,7 @@ fn build_ui(app: &Application) {
         let buffer = textbox_clone.buffer();
         let current_text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true).to_string();
 
-        labels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='30000'>", hentaigana_dicts::get_hentaigana_display(current_text.clone()), "</span>"));
+        labels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_dicts::get_hentaigana_display(current_text.clone()), "</span>"));
     });
     textbox.add_controller(release_controller);
 
@@ -79,12 +79,20 @@ fn build_ui(app: &Application) {
     gtkbox.set_margin_start(12);
     gtkbox.set_margin_end(12);
 
+    let leftscrollbox = ScrolledWindow::builder()
+    .child(&textbox)
+    .build();
+
     let leftbox = Box::new(gtk::Orientation::Vertical, 12);
-    leftbox.append(&textbox);
+    leftbox.append(&leftscrollbox);
     gtkbox.append(&leftbox);
 
+    let rightscrollbox = ScrolledWindow::builder()
+    .child(&labels)
+    .build();
+
     let rightbox = Box::new(gtk::Orientation::Vertical, 12);
-    rightbox.append(&labels);
+    rightbox.append(&rightscrollbox);
     gtkbox.append(&rightbox);
 
     let window = ApplicationWindow::builder()
@@ -93,9 +101,12 @@ fn build_ui(app: &Application) {
         .child(&gtkbox)
         .build();
 
-    window.set_default_size(500, 400);
 
-    labels.set_xalign(1.0);
+    let window_size = (800, 600);
+    window.set_default_size(window_size.0, window_size.1);
+
+    leftscrollbox.set_size_request((window_size.0 as f64 * 0.8) as i32, window_size.1);
+    rightscrollbox.set_size_request((window_size.0 as f64 * 0.2) as i32, window_size.1);
 
     window.present();
 }

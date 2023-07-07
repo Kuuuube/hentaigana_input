@@ -10,6 +10,7 @@ use gtk::gdk::Display;
 use regex::Regex;
 
 mod hentaigana_dicts;
+mod normalize_input;
 
 const APP_ID: &str = "org.gtk_rs.Hentaigana_Input";
 
@@ -51,7 +52,7 @@ fn build_ui(app: &Application) {
         let buffer = textbox_clone.buffer();
         let current_text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true).to_string();
 
-        let hentaigana_display = hentaigana_dicts::get_hentaigana_display(current_text.clone());
+        let hentaigana_display = hentaigana_dicts::get_hentaigana_display(normalize_input::fullwidth_to_halfwidth(current_text.clone()));
 
         primarylabels_clone.set_label(&hentaigana_display.0);
         primarylabels_clone.set_yalign(0.0);
@@ -59,7 +60,7 @@ fn build_ui(app: &Application) {
 
         secondarylabels_clone.set_label(&hentaigana_display.1);
         secondarylabels_clone.set_yalign(0.0);
-        primarylabels_clone.set_widget_name("secondarylabels");
+        secondarylabels_clone.set_widget_name("secondarylabels");
     });
     textbox.add_controller(release_controller);
 
@@ -93,7 +94,7 @@ fn build_ui(app: &Application) {
             let buffer = textbox_clone.buffer();
             let current_text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true).to_string();
 
-            let find_hentaigana = hentaigana_dicts::get_hentaigana_replace(current_text.clone(), keyname);
+            let find_hentaigana = hentaigana_dicts::get_hentaigana_replace(normalize_input::fullwidth_to_halfwidth(current_text.clone()), keyname);
 
             let re = Regex::new(&(find_hentaigana.1 + "$")).unwrap();
             textbox_clone.buffer().set_text(&re.replace(&current_text, find_hentaigana.0));

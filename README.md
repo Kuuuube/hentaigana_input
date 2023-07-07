@@ -14,4 +14,14 @@ Input method for archaic Japanese characters.
 
 - A font containing these characters. [BableStone Han](http://www.babelstone.co.uk/Fonts/Han.html) is recommended. 
 
-    By default, BableStone Han is set as the font in `style.css`. You may change this to any font.
+    Other fonts:
+
+    [IPA MJ Mincho Version 5.01 and later](https://moji.or.jp/mojikiban/font/)
+
+    [Hanazono Mincho](https://de.osdn.net/projects/hanazono-font/)
+
+    [Hanazono Mincho AFDKO](https://github.com/cjkvi/HanaMinAFDKO)
+
+    [UniHentaiKana](http://wakufactory.jp/densho/font/hentai/)
+
+    [Uraniwa Mincho X](http://en.glyphwiki.org/wiki/Group:zr12r_uraniwaminchoX)

@@ -1,4 +1,14 @@
-textview {
+textview#textbox {
     font-family: 'BabelStone Han';
     font-size: 50px;
+}
+
+label#primarylabels {
+    font-family: 'BabelStone Han';
+    font-size: 29px;
+}
+
+label#secondarylabels {
+    font-family: 'BabelStone Han';
+    font-size: 29px;
 }

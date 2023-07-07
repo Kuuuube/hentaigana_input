@@ -20,17 +20,22 @@ fn main() -> glib::ExitCode {
 fn build_ui(app: &Application) {
     load_css();
 
-    let textbox = TextView::builder().build();
+    let textbox = TextView::builder()
+        .name("textbox")
+        .build();
 
     textbox.set_size_request(476, 388);
-    textbox.add_css_class("textview");
     textbox.set_wrap_mode(gtk::WrapMode::Char);
 
-    let primarylabels = Label::builder().build();
+    let primarylabels = Label::builder()
+        .name("primarylabels")
+        .build();
 
-    primarylabels.set_markup("<span font-family='BabelStone Han' size='29000'>変\n体\nが\nな\n！</span>");
+    primarylabels.set_label("変\n体\nが\nな\n！");
 
-    let secondarylabels = Label::builder().build();
+    let secondarylabels = Label::builder()
+        .name("secondarylabels")
+        .build();
 
     let primarylabels_clone = primarylabels.clone();
     let secondarylabels_clone = secondarylabels.clone();
@@ -43,9 +48,9 @@ fn build_ui(app: &Application) {
 
         let hentaigana_display = hentaigana_dicts::get_hentaigana_display(current_text.clone());
 
-        primarylabels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_display.0, "</span>"));
+        primarylabels_clone.set_markup(&hentaigana_display.0);
         primarylabels_clone.set_yalign(0.0);
-        secondarylabels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_display.1, "</span>"));
+        secondarylabels_clone.set_markup(&hentaigana_display.1);
         secondarylabels_clone.set_yalign(0.0);
     });
     textbox.add_controller(release_controller);

@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use regex::Regex;
 
-fn get_hentaigana_group(romaji: &str) -> BTreeMap<&str, &str> {
+fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
     let a_dict: BTreeMap<&str, &str> = BTreeMap::from([
         ("1", "𛀂"),
         ("2", "𛀅"),
@@ -539,10 +539,38 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<&str, &str> {
         ("po", &ho_dict)
     ]);
 
-    return match romaji_dict.get(romaji) {
+    let output_dict = match romaji_dict.get(romaji) {
         Some(some) => some.to_owned().to_owned(),
         None => BTreeMap::default()
+    };
+
+    let dakuten = vec!["ga", "gi", "gu", "ge", "go", "za", "ji", "zi", "zu", "ze", "zo", "da", "di", "du", "de", "do", "ba", "bi", "bu", "be", "bo"];
+    if dakuten.contains(&romaji) {
+        let mut new_dict: BTreeMap<String, String> = Default::default();
+        for (key, value) in output_dict.iter() {
+            let dakuten_append = format!("{}{}", value, "゙");
+            new_dict.insert(key.to_owned().to_owned(), dakuten_append.to_owned());
+        }
+        return new_dict;
     }
+
+    let handakuten = vec!["pa", "pi", "pu", "pe", "po"];
+    if handakuten.contains(&romaji) {
+        let mut new_dict: BTreeMap<String, String> = Default::default();
+        for (key, value) in output_dict.iter() {
+            let handakuten_append = format!("{}{}", value,"゚");
+            new_dict.insert(key.to_owned().to_owned(), handakuten_append.to_owned());
+        }
+        return new_dict;
+    }
+
+    let mut new_dict: BTreeMap<String, String> = Default::default();
+    for (key, value) in output_dict.iter() {
+        new_dict.insert(key.to_owned().to_owned(), value.to_owned().to_owned());
+    }
+
+    return new_dict;
+
 }
 
 fn get_hentaigana(romaji: &str, variant: &str) -> String {
@@ -580,13 +608,13 @@ pub fn get_hentaigana_display(current_text: String) -> String {
     return "".to_owned();
 }
 
-fn format_display(btreemap: BTreeMap<&str, &str>) -> String {
+fn format_display(btreemap: BTreeMap<String, String>) -> String {
     let mut display_string: String = "".to_owned();
 
     let keys = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
     for key in keys {
-        if btreemap.get(key).unwrap_or(&"") != &"" {
-            display_string += &format!("{}{}{}{}", key, " ", btreemap.get(key).unwrap_or(&""), "\n");
+        if btreemap.get(key).unwrap_or(&"".to_owned()) != &"".to_owned() {
+            display_string += &format!("{}{}{}{}", key, " ", btreemap.get(key).unwrap_or(&"".to_owned()), "\n");
         }
     }
 

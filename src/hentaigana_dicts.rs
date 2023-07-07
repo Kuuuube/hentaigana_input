@@ -552,7 +552,22 @@ fn get_hentaigana(romaji: &str, variant: &str) -> String {
     }
 }
 
-pub fn get_hentaigana_display(current_text: String, current_char: String) -> String {
+pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (String, String) {
+    let regex_matches = vec![safe_regex_match(r"[A-z]{1,3}$", &current_text), safe_regex_match(r"[A-z]{1,2}$", &current_text), safe_regex_match(r"[A-z]$", &current_text)];
+    for regex_match in regex_matches {
+        let hentaigana_group = get_hentaigana_group(&regex_match);
+        if hentaigana_group != BTreeMap::default() {
+            let hentaigana_result = get_hentaigana(&regex_match, &current_char);
+            if hentaigana_result != "".to_owned() {
+                return (get_hentaigana(&regex_match, &current_char), regex_match);
+            }
+        }
+    }
+
+    return (current_char.clone(), "".to_string());
+}
+
+pub fn get_hentaigana_display(current_text: String) -> String {
     let regex_matches = vec![safe_regex_match(r"[A-z]{1,3}$", &current_text), safe_regex_match(r"[A-z]{1,2}$", &current_text), safe_regex_match(r"[A-z]$", &current_text)];
 
     for regex_match in regex_matches {
@@ -565,16 +580,14 @@ pub fn get_hentaigana_display(current_text: String, current_char: String) -> Str
     return "".to_owned();
 }
 
-fn format_display(hashmap: BTreeMap<&str, &str>) -> String {
+fn format_display(btreemap: BTreeMap<&str, &str>) -> String {
     let mut display_string: String = "".to_owned();
-    for (i, hentaigana_char) in hashmap.values().enumerate() {
-        let key = match i + 1 {
-            10 => "0".to_string(),
-            11 => "-".to_string(),
-            12 => "=".to_string(),
-            _ => (i + 1).to_string()
-        };
-        display_string += &format!("{}{}{}{}", key, " ", hentaigana_char, "\n");
+
+    let keys = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
+    for key in keys {
+        if btreemap.get(key).unwrap_or(&"") != &"" {
+            display_string += &format!("{}{}{}{}", key, " ", btreemap.get(key).unwrap_or(&""), "\n");
+        }
     }
 
     return display_string;

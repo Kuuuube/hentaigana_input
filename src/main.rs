@@ -26,11 +26,14 @@ fn build_ui(app: &Application) {
     textbox.add_css_class("textview");
     textbox.set_wrap_mode(gtk::WrapMode::Char);
 
-    let labels = Label::builder().build();
+    let primarylabels = Label::builder().build();
 
-    labels.set_markup("<span font-family='BabelStone Han' size='29000'>変\n体\nが\nな\n！</span>");
+    primarylabels.set_markup("<span font-family='BabelStone Han' size='29000'>変\n体\nが\nな\n！</span>");
 
-    let labels_clone = labels.clone();
+    let secondarylabels = Label::builder().build();
+
+    let primarylabels_clone = primarylabels.clone();
+    let secondarylabels_clone = secondarylabels.clone();
     let textbox_clone = textbox.clone();
 
     let release_controller = EventControllerKey::new();
@@ -38,11 +41,17 @@ fn build_ui(app: &Application) {
         let buffer = textbox_clone.buffer();
         let current_text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true).to_string();
 
-        labels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_dicts::get_hentaigana_display(current_text.clone()), "</span>"));
+        let hentaigana_display = hentaigana_dicts::get_hentaigana_display(current_text.clone());
+
+        primarylabels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_display.0, "</span>"));
+        primarylabels_clone.set_yalign(0.0);
+        secondarylabels_clone.set_markup(&format!("{}{}{}", "<span font-family='BabelStone Han' size='29000'>", hentaigana_display.1, "</span>"));
+        secondarylabels_clone.set_yalign(0.0);
     });
     textbox.add_controller(release_controller);
 
-    let labels_clone = labels.clone();
+    let primarylabels_clone = primarylabels.clone();
+    let secondarylabels_clone = secondarylabels.clone();
     let textbox_clone = textbox.clone();
 
     let press_controller = EventControllerKey::new();
@@ -50,12 +59,24 @@ fn build_ui(app: &Application) {
         let keyname = match key.name().unwrap().to_string().as_str() {
             "equal" => "=".to_owned(),
             "minus" => "-".to_owned(),
+            "exclam" => "!".to_owned(),
+            "at" => "@".to_owned(),
+            "numbersign" => "#".to_owned(),
+            "dollar" => "$".to_owned(),
+            "percent" => "%".to_owned(),
+            "asciicircum" => "^".to_owned(),
+            "ampersand" => "&".to_owned(),
+            "asterisk" => "*".to_owned(),
+            "parenleft" => "(".to_owned(),
+            "parenright" => ")".to_owned(),
+            "underscore" => "_".to_owned(),
+            "plus" => "+".to_owned(),
             _ => key.name().unwrap().to_string()
         };
 
-        let accepted_keycodes: Vec<String> = vec!["1".to_string(), "2".to_string(), "3".to_string(), "4".to_string(), "5".to_string(), "6".to_string(), "7".to_string(), "8".to_string(), "9".to_string(), "0".to_string(), "-".to_string(), "=".to_string()];
+        let accepted_keycodes: Vec<&str> = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+"];
 
-        if accepted_keycodes.contains(&keyname) {
+        if accepted_keycodes.contains(&keyname.as_str()) {
             let buffer = textbox_clone.buffer();
             let current_text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true).to_string();
 
@@ -64,7 +85,8 @@ fn build_ui(app: &Application) {
             let re = Regex::new(&(find_hentaigana.1 + "$")).unwrap();
             textbox_clone.buffer().set_text(&re.replace(&current_text, find_hentaigana.0));
             if re.is_match(&current_text) {
-                labels_clone.set_markup("");
+                primarylabels_clone.set_markup("");
+                secondarylabels_clone.set_markup("");
                 return gtk4::Inhibit(true);
             }
         }
@@ -87,12 +109,17 @@ fn build_ui(app: &Application) {
     leftbox.append(&leftscrollbox);
     gtkbox.append(&leftbox);
 
-    let rightscrollbox = ScrolledWindow::builder()
-    .child(&labels)
+    let primaryrightscrollbox = ScrolledWindow::builder()
+    .child(&primarylabels)
     .build();
 
-    let rightbox = Box::new(gtk::Orientation::Vertical, 12);
-    rightbox.append(&rightscrollbox);
+    let secondaryrightscrollbox = ScrolledWindow::builder()
+    .child(&secondarylabels)
+    .build();
+
+    let rightbox = Box::new(gtk::Orientation::Horizontal, 12);
+    rightbox.append(&primaryrightscrollbox);
+    rightbox.append(&secondaryrightscrollbox);
     gtkbox.append(&rightbox);
 
     let window = ApplicationWindow::builder()
@@ -102,11 +129,12 @@ fn build_ui(app: &Application) {
         .build();
 
 
-    let window_size = (800, 600);
+    let window_size = (960, 600);
     window.set_default_size(window_size.0, window_size.1);
 
-    leftscrollbox.set_size_request((window_size.0 as f64 * 0.8) as i32, window_size.1);
-    rightscrollbox.set_size_request((window_size.0 as f64 * 0.2) as i32, window_size.1);
+    leftscrollbox.set_size_request((window_size.0 as f64 * 0.6667) as i32, window_size.1);
+    primaryrightscrollbox.set_size_request((window_size.0 as f64 * 0.1667) as i32, window_size.1);
+    secondaryrightscrollbox.set_size_request((window_size.0 as f64 * 0.1667) as i32, window_size.1);
 
     window.present();
 }

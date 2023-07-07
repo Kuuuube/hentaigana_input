@@ -31,14 +31,16 @@ fn build_ui(app: &Application) {
     textbox.set_wrap_mode(gtk::WrapMode::Char);
 
     let primarylabels = Label::builder()
-        .name("primarylabels")
+        .name("primarystartuplabel")
         .build();
 
-    primarylabels.set_label("変\n体\nが\nな\n！");
+    primarylabels.set_label("𛂸\n𛄞\n𛁡\n𛀇\n𛀡゙\n𛁾");
 
     let secondarylabels = Label::builder()
-        .name("secondarylabels")
+        .name("secondarystartuplabel")
         .build();
+
+    secondarylabels.set_label("𛂍\n𛃤\n𛀊\n𛃴\n𛃪\n𛀬");
 
     let primarylabels_clone = primarylabels.clone();
     let secondarylabels_clone = secondarylabels.clone();
@@ -51,10 +53,13 @@ fn build_ui(app: &Application) {
 
         let hentaigana_display = hentaigana_dicts::get_hentaigana_display(current_text.clone());
 
-        primarylabels_clone.set_markup(&hentaigana_display.0);
+        primarylabels_clone.set_label(&hentaigana_display.0);
         primarylabels_clone.set_yalign(0.0);
-        secondarylabels_clone.set_markup(&hentaigana_display.1);
+        primarylabels_clone.set_widget_name("primarylabels");
+
+        secondarylabels_clone.set_label(&hentaigana_display.1);
         secondarylabels_clone.set_yalign(0.0);
+        primarylabels_clone.set_widget_name("secondarylabels");
     });
     textbox.add_controller(release_controller);
 
@@ -132,7 +137,7 @@ fn build_ui(app: &Application) {
 
     let window = ApplicationWindow::builder()
         .application(app)
-        .title("変体がな")
+        .title("𛂸𛄞𛁡𛀇𛀡゙𛁾 𛂍𛃤𛀊𛃴𛃪𛀬")
         .child(&gtkbox)
         .build();
 

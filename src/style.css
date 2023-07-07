@@ -1,14 +1,28 @@
 textview#textbox {
-    font-family: 'BabelStone Han';
+    font-family: "BabelStone Han";
     font-size: 50px;
 }
 
 label#primarylabels {
-    font-family: 'BabelStone Han';
-    font-size: 29px;
+    font-family: "BabelStone Han";
+    font-size: 40px;
 }
 
 label#secondarylabels {
-    font-family: 'BabelStone Han';
-    font-size: 29px;
+    font-family: "BabelStone Han";
+    font-size: 40px;
+}
+
+label#primarystartuplabel {
+    font-family: "BabelStone Han";
+    font-size: 50px;
+}
+
+label#secondarystartuplabel {
+    font-family: "BabelStone Han";
+    font-size: 50px;
+}
+
+label {
+    font-family: "BabelStone Han";
 }

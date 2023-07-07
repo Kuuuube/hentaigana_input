@@ -625,6 +625,8 @@ fn format_display(btreemap: BTreeMap<String, String>) -> (String, String) {
             display_string.1 += &format!("{}{}{}{}", key, " ", btreemap.get(key).unwrap_or(&"".to_owned()), "\n");
         }
     }
+    display_string.0.pop();
+    display_string.1.pop();
 
     return display_string;
 }

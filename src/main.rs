@@ -1,5 +1,8 @@
 #![windows_subsystem = "windows"]
 
+use std::fs::File;
+use std::io::prelude::*;
+
 use gtk4 as gtk;
 use gtk::{prelude::*, glib, Application, ApplicationWindow, TextView, Box, Label, EventControllerKey, ScrolledWindow};
 use gtk::gdk::Display;
@@ -149,7 +152,13 @@ fn load_css() {
     let provider = gtk::CssProvider::new();
     let priority = gtk::STYLE_PROVIDER_PRIORITY_APPLICATION;
 
-    provider.load_from_data(include_str!("style.css"));
+    let mut css_data = String::new();
+    match File::open("style.css") {
+        Ok(mut ok) => {ok.read_to_string(&mut css_data).unwrap();},
+        Err(_) => {css_data = include_str!("style.css").to_string()}
+    }
+
+    provider.load_from_data(&css_data);
     
     gtk::style_context_add_provider_for_display(&display, &provider, priority);
 }

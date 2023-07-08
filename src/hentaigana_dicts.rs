@@ -747,7 +747,7 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("*", "⁻"),
         ("(", "₋"),
         (")", "-"),
-        ("〽", "_")
+        ("_", "〽")
     ]);
 
     let dots_dict: BTreeMap<&str, &str> = BTreeMap::from([
@@ -937,7 +937,7 @@ pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (St
         }
     }
 
-    return (current_char.clone(), "".to_string());
+    return ("No_match_found.".to_string(), "No_match_found.".to_string());
 }
 
 pub fn get_hentaigana_display(current_text: String) -> (String, String) {

@@ -86,11 +86,20 @@ fn build_ui(app: &Application) {
 
             let find_hentaigana = hentaigana_dicts::get_hentaigana_replace(normalize_input::fullwidth_to_halfwidth(current_text.clone()), keyname);
 
-            let re = Regex::new(&(find_hentaigana.1 + "$")).unwrap();
-            textbox_clone.buffer().set_text(&re.replace(&current_text, find_hentaigana.0));
+            let re = Regex::new(&(find_hentaigana.1.clone() + "$")).unwrap();
+            textbox_clone.buffer().set_text(&re.replace(&current_text, find_hentaigana.0.clone()));
             if re.is_match(&current_text) {
-                primarylabels_clone.set_markup("");
-                secondarylabels_clone.set_markup("");
+                let new_buffer = textbox_clone.buffer();
+                let new_text = new_buffer.text(&new_buffer.start_iter(), &new_buffer.end_iter(), true).to_string();
+                let hentaigana_display = hentaigana_dicts::get_hentaigana_display(normalize_input::fullwidth_to_halfwidth(new_text.clone()));
+
+                primarylabels_clone.set_label(&hentaigana_display.0);
+                primarylabels_clone.set_yalign(0.0);
+                primarylabels_clone.set_widget_name("primarylabels");
+
+                secondarylabels_clone.set_label(&hentaigana_display.1);
+                secondarylabels_clone.set_yalign(0.0);
+                secondarylabels_clone.set_widget_name("secondarylabels");
                 return gtk4::Inhibit(true);
             }
         }

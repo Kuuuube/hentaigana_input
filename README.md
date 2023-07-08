@@ -6,7 +6,7 @@ Input method for archaic Japanese characters.
 
 - Run `hentaigana_input`
 
-- Type the romaji for a character
+- Type the romaji for a character corresponding to a [dictionary value](./docs/key.md)
 
 - Press the number or symbol next to the character you want
 

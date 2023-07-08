@@ -884,13 +884,15 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         ("=", &dhyphen_dict)
     ]);
 
-    let output_dict = match romaji_dict.get(romaji) {
+    let lowered_romaji = romaji.to_lowercase();
+
+    let output_dict = match romaji_dict.get(lowered_romaji.as_str()) {
         Some(some) => some.to_owned().to_owned(),
         None => BTreeMap::default()
     };
 
     let dakuten = vec!["ga", "gi", "gu", "ge", "go", "za", "ji", "zi", "zu", "ze", "zo", "da", "di", "du", "de", "do", "ba", "bi", "bu", "be", "bo", "vu", "goto"];
-    if dakuten.contains(&romaji) {
+    if dakuten.contains(&lowered_romaji.as_str()) {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let dakuten_append = format!("{}{}", value, "゙");
@@ -900,7 +902,7 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
     }
 
     let handakuten = vec!["pa", "pi", "pu", "pe", "po"];
-    if handakuten.contains(&romaji) {
+    if handakuten.contains(&lowered_romaji.as_str()) {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let handakuten_append = format!("{}{}", value,"゚");

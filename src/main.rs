@@ -73,22 +73,9 @@ fn build_ui(app: &Application) {
 
     let press_controller = EventControllerKey::new();
     press_controller.connect_key_pressed(move |_press_controller, key, _keycode, _state| {
-        let keyname = match key.name().unwrap().to_string().as_str() {
-            "equal" => "=".to_owned(),
-            "minus" => "-".to_owned(),
-            "exclam" => "!".to_owned(),
-            "at" => "@".to_owned(),
-            "numbersign" => "#".to_owned(),
-            "dollar" => "$".to_owned(),
-            "percent" => "%".to_owned(),
-            "asciicircum" => "^".to_owned(),
-            "ampersand" => "&".to_owned(),
-            "asterisk" => "*".to_owned(),
-            "parenleft" => "(".to_owned(),
-            "parenright" => ")".to_owned(),
-            "underscore" => "_".to_owned(),
-            "plus" => "+".to_owned(),
-            _ => key.name().unwrap().to_string()
+        let keyname = match key.to_unicode() {
+            Some(some) => some.to_string(),
+            None => "".to_string(),
         };
 
         let accepted_keycodes: Vec<&str> = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+"];

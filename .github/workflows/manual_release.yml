@@ -1,0 +1,63 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_tag:
+        description: "Tag name:"
+        required: true
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup dependencies
+        run: rustup update stable && rustup default stable
+
+      - name: Setup Sudachi Dict
+        run: ./setup.sh
+
+      - name: Build
+        run: cargo build --all --release && strip target/release/hentaigana_input && tar -czvf target/release/hentaigana_input_${{ github.event.inputs.input_tag }}_linux_x64.tar.gz -C target/release/ hentaigana_input
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.input_tag }}
+          draft: true
+          files: target/release/hentaigana_input_${{ github.event.inputs.input_tag }}_linux_x64.tar.gz
+          tag_name: ${{ github.event.inputs.input_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-win:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup dependencies
+        run: rustup update stable && rustup default stable
+
+      - name: Setup Sudachi Dict
+        run: ./setup.bat
+
+      - name: Build
+        run: cargo build --all --release && powershell Compress-Archive target/release/hentaigana_input.exe target/release/hentaigana_input_${{ github.event.inputs.input_tag }}_windows_x64.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.input_tag }}
+          draft: true
+          files: target/release/hentaigana_input_${{ github.event.inputs.input_tag }}_windows_x64.zip
+          tag_name: ${{ github.event.inputs.input_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

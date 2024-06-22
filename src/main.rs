@@ -100,10 +100,10 @@ fn build_ui(app: &Application) {
                 secondarylabels_clone.set_label(&hentaigana_display.1);
                 secondarylabels_clone.set_yalign(0.0);
                 secondarylabels_clone.set_widget_name("secondarylabels");
-                return gtk4::Inhibit(true);
+                return glib::Propagation::Stop;
             }
         }
-        gtk4::Inhibit(false)
+        glib::Propagation::Proceed
     });
     textbox.add_controller(press_controller);
 

@@ -25,3 +25,7 @@ Input method for archaic Japanese characters.
     [UniHentaiKana](http://wakufactory.jp/densho/font/hentai/)
 
     [Uraniwa Mincho X](http://en.glyphwiki.org/wiki/Group:zr12r_uraniwaminchoX)
+
+## Notes
+
+- Inspired by https://kobunworld.blog.fc2.com/blog-entry-6.html

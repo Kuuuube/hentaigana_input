@@ -46,6 +46,17 @@ jobs:
           rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
           rustup default stable-msvc
 
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          release: false
+          update: true
+          install: |
+            git mingw-w64-x86_64-xz mingw-w64-x86_64-pkgconf mingw-w64-x86_64-gcc mingw-w64-x86_64-clang mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-autotools mingw-w64-x86_64-make mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-diffutils
+            mingw-w64-x86_64-desktop-file-utils mingw-w64-x86_64-appstream mingw-w64-x86_64-gtk4 mingw-w64-x86_64-libadwaita
+            mingw-w64-x86_64-poppler mingw-w64-x86_64-poppler-data mingw-w64-x86_64-angleproject
+
       - name: Build
         run: cargo build --verbose
 

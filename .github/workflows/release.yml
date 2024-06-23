@@ -86,8 +86,8 @@ jobs:
         run: |
           cargo build --all --release
           mkdir build
-          move /y target/release/hentaigana_input.exe build/hentaigana_input.exe
-          move /y src/style.css build/style.css
+          move target/release/hentaigana_input.exe build/hentaigana_input.exe
+          move src/style.css build/style.css
           powershell Compress-Archive build/* hentaigana_input_${{ github.ref_name }}_windows_x64.zip
 
       - name: Release

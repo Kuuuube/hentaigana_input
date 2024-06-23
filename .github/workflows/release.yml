@@ -24,7 +24,10 @@ jobs:
         run: |
           cargo build --all --release
           strip target/release/hentaigana_input
-          tar -czvf target/release/hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz -C target/release/ hentaigana_input
+          mkdir build
+          mv target/release/hentaigana_input build/hentaigana_input
+          cp src/style.css build/style.css
+          tar -czvf hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz -C build style.css hentaigana_input
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -32,7 +35,7 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           draft: true
-          files: target/release/hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz
+          files: hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -82,7 +85,10 @@ jobs:
       - name: Build
         run: |
           cargo build --all --release
-          powershell Compress-Archive target/release/hentaigana_input.exe target/release/hentaigana_input_${{ github.ref_name }}_windows_x64.zip
+          mkdir build
+          move /y target/release/hentaigana_input.exe build/hentaigana_input.exe
+          move /y src/style.css build/style.css
+          powershell Compress-Archive build/* hentaigana_input_${{ github.ref_name }}_windows_x64.zip
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -90,6 +96,6 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           draft: true
-          files: target/release/hentaigana_input_${{ github.ref_name }}_windows_x64.zip
+          files: hentaigana_input_${{ github.ref_name }}_windows_x64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

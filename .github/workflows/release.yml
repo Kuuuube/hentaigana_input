@@ -86,6 +86,7 @@ jobs:
         run: |
           cargo build --all --release
           mkdir build
+          Get-Childitem -Path "C:\\gtk-build\\gtk\\x64\\release\\bin\\*.dll" -File -Recurse | Copy-Item -Destination "build"
           move target/release/hentaigana_input.exe build/hentaigana_input.exe
           move src/style.css build/style.css
           powershell Compress-Archive build/* hentaigana_input_${{ github.ref_name }}_windows_x64.zip

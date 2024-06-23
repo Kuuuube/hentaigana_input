@@ -17,7 +17,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup dependencies
-        run: rustup update stable && rustup default stable
+        run: |
+          rustup update stable
+          rustup default stable
+          sudo apt install libgtk-4-dev build-essential
 
       - name: Build
         run: cargo build --all --release && strip target/release/hentaigana_input && tar -czvf target/release/hentaigana_input_${{ github.event.inputs.input_tag }}_linux_x64.tar.gz -C target/release/ hentaigana_input

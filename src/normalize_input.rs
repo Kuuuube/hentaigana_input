@@ -96,7 +96,7 @@ pub fn fullwidth_to_halfwidth(input_string: String) -> String {
             '｜' => '|',
             '｝' => '}',
             '～' => '~',
-            _ => char
+            _ => char,
         };
         new_string = format!("{}{}", new_string, filtered_char);
     }

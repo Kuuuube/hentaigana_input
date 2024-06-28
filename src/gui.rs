@@ -3,10 +3,12 @@ pub struct HentaiganaInputSettings {
     pub dark_mode: bool,
     pub textedit_font_size: f32,
     pub ime_font_size: f32,
+    pub ime_sidebar_width: f32,
     pub ime_shortcuts: bool,
 
     pub textedit_font_size_string: String,
     pub ime_font_size_string: String,
+    pub ime_sidebar_width_string: String,
 }
 
 impl Default for HentaiganaInputSettings {
@@ -15,10 +17,12 @@ impl Default for HentaiganaInputSettings {
             dark_mode: true,
             textedit_font_size: 50.0,
             ime_font_size: 40.0,
+            ime_sidebar_width: 250.0,
             ime_shortcuts: true,
 
             textedit_font_size_string: "50".to_owned(),
             ime_font_size_string: "40".to_owned(),
+            ime_sidebar_width_string: "250".to_owned(),
         }
     }
 }
@@ -115,6 +119,16 @@ impl eframe::App for HentaiganaInputGui {
                             }
                             ui.end_row();
 
+                            ui.add(egui::Label::new("IME Sidebar Width:").selectable(false));
+                            let response = ui.add_sized(
+                                ui.available_size(),
+                                egui::TextEdit::singleline(&mut self.settings.ime_sidebar_width_string),
+                            );
+                            if response.changed() {
+                                set_sidebar_size(&mut self.settings);
+                            }
+                            ui.end_row();
+
                             ui.add(egui::Checkbox::new(
                                 &mut self.settings.ime_shortcuts,
                                 "IME Shortcuts",
@@ -136,8 +150,8 @@ impl eframe::App for HentaiganaInputGui {
         });
 
         egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel")
-            .min_width(250.0)
-            .max_width(250.0)
+            .min_width(self.settings.ime_sidebar_width)
+            .max_width(self.settings.ime_sidebar_width)
             .resizable(false)
             .show(ctx, |ui| {
                 egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
@@ -321,6 +335,17 @@ fn set_font_size(settings: &mut HentaiganaInputSettings) {
         Ok(ok) => {
             if ok > 0.0 {
                 settings.ime_font_size = ok
+            }
+        }
+        Err(_) => {}
+    };
+}
+
+fn set_sidebar_size(settings: &mut HentaiganaInputSettings) {
+    match settings.ime_sidebar_width_string.parse::<f32>() {
+        Ok(ok) => {
+            if ok > 0.0 {
+                settings.ime_sidebar_width = ok
             }
         }
         Err(_) => {}

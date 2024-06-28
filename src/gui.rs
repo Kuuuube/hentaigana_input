@@ -29,6 +29,8 @@ pub struct HentaiganaInputGui {
 
     #[serde(skip)]
     ime_text: String,
+    #[serde(skip)]
+    blocked_keys: Vec<String>
 }
 
 impl Default for HentaiganaInputGui {
@@ -38,6 +40,7 @@ impl Default for HentaiganaInputGui {
             settings: HentaiganaInputSettings::default(),
 
             ime_text: "".to_owned(),
+            blocked_keys: vec![],
         }
     }
 }
@@ -137,8 +140,7 @@ impl eframe::App for HentaiganaInputGui {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            let blocked_keys = vec!["!".to_owned(), "@".to_owned()];
-            filter_events(ui, blocked_keys);
+            filter_events(ui, self.blocked_keys.clone());
 
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.add_sized(
@@ -158,8 +160,12 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
 
     let button_label_width = 50.0;
     let ime_text_style = egui::TextStyle::Name("ime".into());
+    let mut blocked_keys: Vec<String> = vec![];
 
     for (left_display, right_display) in hentaigana_display {
+        blocked_keys.push(left_display.left.clone());
+        blocked_keys.push(right_display.left.clone());
+
         if left_display.right.len() > 0 {
             ui.add_sized(
                 [button_label_width, 0.0],
@@ -196,6 +202,7 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
 
         ui.end_row();
     }
+    hentaigana_input_gui.blocked_keys = blocked_keys;
 }
 
 fn unselectable_warn_if_debug_build(ui: &mut egui::Ui) {

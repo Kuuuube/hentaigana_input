@@ -12,11 +12,11 @@ impl Default for HentaiganaInputSettings {
     fn default() -> Self {
         Self {
             dark_mode: true,
-            textedit_font_size: 25.0,
-            ime_font_size: 25.0,
+            textedit_font_size: 50.0,
+            ime_font_size: 40.0,
 
-            textedit_font_size_string: "25".to_owned(),
-            ime_font_size_string: "25".to_owned(),
+            textedit_font_size_string: "50".to_owned(),
+            ime_font_size_string: "40".to_owned(),
         }
     }
 }
@@ -83,20 +83,14 @@ impl eframe::App for HentaiganaInputGui {
                             ui.add_sized(ui.available_size(), egui::Label::new("Textarea Font Size:").selectable(false));
                             let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.textedit_font_size_string));
                             if response.changed() {
-                                match self.settings.textedit_font_size_string.parse::<f32>() {
-                                    Ok(ok) => { self.settings.textedit_font_size = ok },
-                                    Err(_) => {}
-                                };
+                                set_font_size(&mut self.settings);
                             }
                             ui.end_row();
 
                             ui.add_sized(ui.available_size(), egui::Label::new("IME Font Size:").selectable(false));
                             let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.ime_font_size_string));
                             if response.changed() {
-                                match self.settings.ime_font_size_string.parse::<f32>() {
-                                    Ok(ok) => { self.settings.ime_font_size = ok },
-                                    Err(_) => {}
-                                };
+                                set_font_size(&mut self.settings);
                             }
                             ui.end_row();
                         });
@@ -116,13 +110,18 @@ impl eframe::App for HentaiganaInputGui {
 
         egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel").min_width(200.0).resizable(false).show(ctx, |ui| {
             egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
-                let button_label_width = 100.0;
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "1"));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "!"));
+                let button_label_width = 50.0;
+                let ime_text_style = egui::TextStyle::Name("ime".into());
+                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("1").text_style(ime_text_style.clone())).selectable(false));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("𛀂").text_style(ime_text_style.clone())));
+                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("!").text_style(ime_text_style.clone())).selectable(false));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("あ").text_style(ime_text_style.clone())));
                 ui.end_row();
 
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "2"));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "@"));
+                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("2").text_style(ime_text_style.clone())).selectable(false));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("𛀅").text_style(ime_text_style.clone())));
+                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("@").text_style(ime_text_style.clone())).selectable(false));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("ぁ").text_style(ime_text_style.clone())));
                 ui.end_row();
             });
         });
@@ -134,7 +133,7 @@ impl eframe::App for HentaiganaInputGui {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.add_sized(
                     ui.available_size(),
-                    egui::TextEdit::multiline(&mut self.text).lock_focus(true),
+                    egui::TextEdit::multiline(&mut self.text).lock_focus(true).font(egui::TextStyle::Name("textedit".into())),
                 );
             });
         });
@@ -183,4 +182,24 @@ fn filter_events(ui: &mut egui::Ui, blocked_keys: Vec<String>) {
             }
         }
     });
+}
+
+fn set_font_size(settings: &mut HentaiganaInputSettings) {
+    match settings.textedit_font_size_string.parse::<f32>() {
+        Ok(ok) => {
+            if ok > 0.0 {
+                settings.textedit_font_size = ok
+            }
+        },
+        Err(_) => {}
+    };
+
+    match settings.ime_font_size_string.parse::<f32>() {
+        Ok(ok) => {
+            if ok > 0.0 {
+                settings.ime_font_size = ok
+            }
+        },
+        Err(_) => {}
+    };
 }

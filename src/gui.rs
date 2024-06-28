@@ -298,8 +298,9 @@ fn filter_events_and_replace(
         for event in &i.events {
             match event {
                 egui::Event::Text(t) => {
-                    if blocked_keys.contains(t) {
-                        replace_text(hentaigana_input_gui, t.to_string());
+                    let normalized_t = crate::normalize_input::fullwidth_to_halfwidth(t.to_string());
+                    if blocked_keys.contains(&normalized_t) {
+                        replace_text(hentaigana_input_gui, normalized_t);
                         i.events = vec![];
                         break;
                     }

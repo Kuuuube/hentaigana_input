@@ -141,7 +141,7 @@ impl eframe::App for HentaiganaInputGui {
             filter_events(ui, blocked_keys);
 
             egui::ScrollArea::vertical().show(ui, |ui| {
-                let textedit_response = ui.add_sized(
+                ui.add_sized(
                     ui.available_size(),
                     egui::TextEdit::multiline(&mut self.text)
                         .lock_focus(true)

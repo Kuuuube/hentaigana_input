@@ -24,7 +24,7 @@ jobs:
         run: |
           rustup update ${{ matrix.toolchain }}
           rustup default ${{ matrix.toolchain }}
-          sudo apt install libgtk-4-dev build-essential
+          sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
 
       - name: Build
         run: cargo build --verbose

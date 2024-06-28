@@ -18,16 +18,13 @@ jobs:
         run: |
           rustup update stable
           rustup default stable
-          sudo apt install libgtk-4-dev build-essential
+          sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
 
       - name: Build
         run: |
           cargo build --all --release
           strip target/release/hentaigana_input
-          mkdir build
-          mv target/release/hentaigana_input build/hentaigana_input
-          cp src/style.css build/style.css
-          tar -czvf hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz -C build style.css hentaigana_input
+          tar -czvf target/release/hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz -C target/release/ hentaigana_input
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -48,48 +45,12 @@ jobs:
       - name: Setup dependencies
         run: |
           rustup update stable
-          rustup default stable-msvc
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      # needed for cache restore
-      - name: create gtk dir
-        run: mkdir C:\gtk-build\gtk\x64\release
-      - uses: actions/cache@v3
-        id: cache
-        with:
-          path: c:/gtk-build/gtk/x64/release/**
-          key: gtk-windows-build
-          restore-keys: gtk-windows-build
-
-      - name: Update path
-        run: |
-          echo "PKG_CONFIG=C:\gtk-build\gtk\x64\release\bin\pkgconf.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "C:\pkg-config-lite-0.28-1\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo "C:\gtk-build\gtk\x64\release\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo $env:GITHUB_PATH
-          echo $env:PATH
-
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          pipx install gvsbuild
-          Move-Item "C:\Program Files\Git\usr\bin" "C:\Program Files\Git\usr\notbin"
-          Move-Item "C:\Program Files\Git\bin" "C:\Program Files\Git\notbin"
-          gvsbuild build --msys-dir=C:\msys64 gtk4 libadwaita librsvg
-          Move-Item "C:\Program Files\Git\usr\notbin" "C:\Program Files\Git\usr\bin"
-          Move-Item "C:\Program Files\Git\notbin" "C:\Program Files\Git\bin"
+          rustup default stable
 
       - name: Build
         run: |
           cargo build --all --release
-          mkdir build
-          Get-Childitem -Path "C:\\gtk-build\\gtk\\x64\\release\\bin\\*.dll" -File -Recurse | Copy-Item -Destination "build"
-          move target/release/hentaigana_input.exe build/hentaigana_input.exe
-          move src/style.css build/style.css
-          powershell Compress-Archive build/* hentaigana_input_${{ github.ref_name }}_windows_x64.zip
+          powershell Compress-Archive target/release/hentaigana_input.exe target/release/hentaigana_input_${{ github.ref_name }}_windows_x64.zip
 
       - name: Release
         uses: softprops/action-gh-release@v2

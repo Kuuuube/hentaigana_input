@@ -171,17 +171,22 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
-                    egui::RichText::new(left_display.left).text_style(ime_text_style.clone()),
+                    egui::RichText::new(left_display.left.clone()).text_style(ime_text_style.clone()),
                 )
                 .selectable(false),
             );
-            ui.add_sized(
+            let left_selectable_label = ui.add_sized(
                 [button_label_width, 0.0],
                 egui::SelectableLabel::new(
                     false,
                     egui::RichText::new(left_display.right).text_style(ime_text_style.clone()),
                 ),
             );
+            if left_selectable_label.clicked() {
+                let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), left_display.left);
+                let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
+                hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
+            }
         }
 
         if right_display.right.len() > 0 {
@@ -190,17 +195,22 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
-                    egui::RichText::new(right_display.left).text_style(ime_text_style.clone()),
+                    egui::RichText::new(right_display.left.clone()).text_style(ime_text_style.clone()),
                 )
                 .selectable(false),
             );
-            ui.add_sized(
+            let right_selectable_label = ui.add_sized(
                 [button_label_width, 0.0],
                 egui::SelectableLabel::new(
                     false,
                     egui::RichText::new(right_display.right).text_style(ime_text_style.clone()),
                 ),
             );
+            if right_selectable_label.clicked() {
+                let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), right_display.left);
+                let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
+                hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
+            }
         }
 
         ui.end_row();

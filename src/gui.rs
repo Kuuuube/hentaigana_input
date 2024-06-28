@@ -1,16 +1,28 @@
 #[derive(serde::Deserialize, serde::Serialize)]
+pub struct HentaiganaInputSettings {
+    dark_mode: bool,
+}
+
+impl Default for HentaiganaInputSettings {
+    fn default() -> Self {
+        Self {
+            dark_mode: true,
+        }
+    }
+}
+
+#[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub struct HentaiganaInputGui {
     text: String,
-    dark_mode: bool,
-    //#[serde(skip)] to opt-out of serialization of a field
+    settings: HentaiganaInputSettings,
 }
 
 impl Default for HentaiganaInputGui {
     fn default() -> Self {
         Self {
             text: "".to_owned(),
-            dark_mode: true,
+            settings: HentaiganaInputSettings::default(),
         }
     }
 }
@@ -35,7 +47,7 @@ impl eframe::App for HentaiganaInputGui {
     }
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        set_theme(ctx, self.dark_mode);
+        set_theme(ctx, self.settings.dark_mode);
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -55,6 +67,11 @@ impl eframe::App for HentaiganaInputGui {
 
                     ui.menu_button("Settings", |ui| {
                         light_dark_buttons(self, ui);
+
+                        if ui.button("Reset").clicked() {
+                            self.settings = HentaiganaInputSettings::default();
+                            ui.close_menu();
+                        }
                     });
                 });
 
@@ -107,7 +124,7 @@ fn unselectable_warn_if_debug_build(ui: &mut egui::Ui) {
 fn light_dark_buttons(hentaigana_input_gui: &mut HentaiganaInputGui, ui: &mut egui::Ui) {
     let mut visuals = ui.ctx().style().visuals.clone();
     visuals.light_dark_radio_buttons(ui);
-    hentaigana_input_gui.dark_mode = visuals.dark_mode;
+    hentaigana_input_gui.settings.dark_mode = visuals.dark_mode;
     set_theme(ui.ctx(), visuals.dark_mode);
 }
 

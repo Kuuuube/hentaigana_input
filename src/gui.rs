@@ -165,10 +165,9 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
     let mut blocked_keys: Vec<String> = vec![];
 
     for (left_display, right_display) in hentaigana_display {
-        blocked_keys.push(left_display.left.clone());
-        blocked_keys.push(right_display.left.clone());
-
         if left_display.right.len() > 0 {
+            blocked_keys.push(left_display.left.clone());
+
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
@@ -186,6 +185,8 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
         }
 
         if right_display.right.len() > 0 {
+            blocked_keys.push(right_display.left.clone());
+
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(

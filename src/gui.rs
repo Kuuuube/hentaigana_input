@@ -64,13 +64,17 @@ impl eframe::App for HentaiganaInputGui {
             });
         });
 
-        egui::SidePanel::right("right_sidepanel").show(ctx, |ui| {
-            for i in 1..=3 {
-                let sidebar_item = ui.selectable_label(false, format!("Button {}", i));
-                if sidebar_item.clicked() {
-                    println!("clicked {}", i);
-                }
-            }
+        egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel").min_width(200.0).resizable(false).show(ctx, |ui| {
+            egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
+                let button_label_width = 100.0;
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "1"));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "!"));
+                ui.end_row();
+
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "2"));
+                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, "@"));
+                ui.end_row();
+            });
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {

@@ -927,7 +927,7 @@ pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (St
     return ("No_match_found.".to_string(), "No_match_found.".to_string());
 }
 
-pub fn get_hentaigana_display(current_text: String) -> (String, String) {
+pub fn get_hentaigana_display(current_text: String) -> Vec<(HentaiganaDisplay, HentaiganaDisplay)> {
     let regex_matches = vec![
         safe_regex_match(r".{5}$", &current_text),
         safe_regex_match(r".{4}$", &current_text),
@@ -943,41 +943,44 @@ pub fn get_hentaigana_display(current_text: String) -> (String, String) {
         }
     }
 
-    return ("".to_owned(), "".to_owned());
+    return vec![];
 }
 
-fn format_display(btreemap: BTreeMap<String, String>) -> (String, String) {
-    let mut display_string: (String, String) = ("".to_owned(), "".to_owned());
+fn format_display(
+    btreemap: BTreeMap<String, String>,
+) -> Vec<(HentaiganaDisplay, HentaiganaDisplay)> {
+    let mut display_values = vec![];
 
-    let keys = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
-    for key in keys {
-        if btreemap.get(key).unwrap_or(&"".to_owned()) != &"".to_owned() {
-            display_string.0 += &format!(
-                "{}{}{}{}",
-                key,
-                " ",
-                btreemap.get(key).unwrap_or(&"".to_owned()),
-                "\n"
-            );
+    let mut keys = vec![
+        "1", "!", "2", "@", "3", "#", "4", "$", "5", "%", "6", "^", "7", "&", "8", "*", "9", "(",
+        "0", ")", "-", "_", "=", "+",
+    ]
+    .into_iter();
+
+    loop {
+        let key1 = match keys.next() {
+            Some(some) => some,
+            None => break,
+        };
+        let key2 = match keys.next() {
+            Some(some) => some,
+            None => "",
+        };
+        if btreemap.get(key1).unwrap_or(&"".to_owned()) != &"".to_owned() {
+            display_values.push((
+                HentaiganaDisplay {
+                    left: key1.to_owned(),
+                    right: btreemap.get(key1).unwrap_or(&"".to_owned()).to_owned(),
+                },
+                HentaiganaDisplay {
+                    left: key2.to_owned(),
+                    right: btreemap.get(key2).unwrap_or(&"".to_owned()).to_owned(),
+                },
+            ));
         }
     }
 
-    let keys = vec!["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+"];
-    for key in keys {
-        if btreemap.get(key).unwrap_or(&"".to_owned()) != &"".to_owned() {
-            display_string.1 += &format!(
-                "{}{}{}{}",
-                key,
-                " ",
-                btreemap.get(key).unwrap_or(&"".to_owned()),
-                "\n"
-            );
-        }
-    }
-    display_string.0.pop();
-    display_string.1.pop();
-
-    return display_string;
+    return display_values;
 }
 
 fn safe_regex_match(regex_string: &str, search_string: &str) -> String {
@@ -997,4 +1000,9 @@ fn create_dotstring(input_string: String) -> String {
         new_string += ".";
     }
     return new_string;
+}
+
+pub struct HentaiganaDisplay {
+    pub left: String,
+    pub right: String,
 }

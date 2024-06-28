@@ -26,6 +26,9 @@ impl Default for HentaiganaInputSettings {
 pub struct HentaiganaInputGui {
     text: String,
     settings: HentaiganaInputSettings,
+
+    #[serde(skip)]
+    ime_text: String,
 }
 
 impl Default for HentaiganaInputGui {
@@ -33,6 +36,8 @@ impl Default for HentaiganaInputGui {
         Self {
             text: "".to_owned(),
             settings: HentaiganaInputSettings::default(),
+
+            ime_text: "".to_owned(),
         }
     }
 }
@@ -80,15 +85,29 @@ impl eframe::App for HentaiganaInputGui {
                         light_dark_buttons(self, ui);
 
                         egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
-                            ui.add_sized(ui.available_size(), egui::Label::new("Textarea Font Size:").selectable(false));
-                            let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.textedit_font_size_string));
+                            ui.add_sized(
+                                ui.available_size(),
+                                egui::Label::new("Textarea Font Size:").selectable(false),
+                            );
+                            let response = ui.add_sized(
+                                ui.available_size(),
+                                egui::TextEdit::singleline(
+                                    &mut self.settings.textedit_font_size_string,
+                                ),
+                            );
                             if response.changed() {
                                 set_font_size(&mut self.settings);
                             }
                             ui.end_row();
 
-                            ui.add_sized(ui.available_size(), egui::Label::new("IME Font Size:").selectable(false));
-                            let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.ime_font_size_string));
+                            ui.add_sized(
+                                ui.available_size(),
+                                egui::Label::new("IME Font Size:").selectable(false),
+                            );
+                            let response = ui.add_sized(
+                                ui.available_size(),
+                                egui::TextEdit::singleline(&mut self.settings.ime_font_size_string),
+                            );
                             if response.changed() {
                                 set_font_size(&mut self.settings);
                             }
@@ -108,35 +127,74 @@ impl eframe::App for HentaiganaInputGui {
             });
         });
 
-        egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel").min_width(200.0).resizable(false).show(ctx, |ui| {
-            egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
-                let button_label_width = 50.0;
-                let ime_text_style = egui::TextStyle::Name("ime".into());
-                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("1").text_style(ime_text_style.clone())).selectable(false));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("𛀂").text_style(ime_text_style.clone())));
-                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("!").text_style(ime_text_style.clone())).selectable(false));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("あ").text_style(ime_text_style.clone())));
-                ui.end_row();
-
-                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("2").text_style(ime_text_style.clone())).selectable(false));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("𛀅").text_style(ime_text_style.clone())));
-                ui.add_sized([button_label_width, 0.0], egui::Label::new(egui::RichText::new("@").text_style(ime_text_style.clone())).selectable(false));
-                ui.add_sized([button_label_width, 0.0], egui::SelectableLabel::new(false, egui::RichText::new("ぁ").text_style(ime_text_style.clone())));
-                ui.end_row();
+        egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel")
+            .min_width(325.0)
+            .resizable(false)
+            .show(ctx, |ui| {
+                egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
+                    setup_ime_labels(ui, self);
+                });
             });
-        });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             let blocked_keys = vec!["!".to_owned(), "@".to_owned()];
             filter_events(ui, blocked_keys);
 
             egui::ScrollArea::vertical().show(ui, |ui| {
-                ui.add_sized(
+                let textedit_response = ui.add_sized(
                     ui.available_size(),
-                    egui::TextEdit::multiline(&mut self.text).lock_focus(true).font(egui::TextStyle::Name("textedit".into())),
+                    egui::TextEdit::multiline(&mut self.text)
+                        .lock_focus(true)
+                        .font(egui::TextStyle::Name("textedit".into())),
                 );
             });
         });
+    }
+}
+
+fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInputGui) {
+    let hentaigana_display =
+        crate::hentaigana_dicts::get_hentaigana_display(hentaigana_input_gui.text.clone());
+
+    let button_label_width = 50.0;
+    let ime_text_style = egui::TextStyle::Name("ime".into());
+
+    for (left_display, right_display) in hentaigana_display {
+        if left_display.right.len() > 0 {
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::Label::new(
+                    egui::RichText::new(left_display.left).text_style(ime_text_style.clone()),
+                )
+                .selectable(false),
+            );
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::SelectableLabel::new(
+                    false,
+                    egui::RichText::new(left_display.right).text_style(ime_text_style.clone()),
+                ),
+            );
+        }
+
+        if right_display.right.len() > 0 {
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::Label::new(
+                    egui::RichText::new(right_display.left).text_style(ime_text_style.clone()),
+                )
+                .selectable(false),
+            );
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::SelectableLabel::new(
+                    false,
+                    egui::RichText::new(right_display.right).text_style(ime_text_style.clone()),
+                ),
+            );
+        }
+
+        ui.end_row();
     }
 }
 
@@ -190,7 +248,7 @@ fn set_font_size(settings: &mut HentaiganaInputSettings) {
             if ok > 0.0 {
                 settings.textedit_font_size = ok
             }
-        },
+        }
         Err(_) => {}
     };
 
@@ -199,7 +257,7 @@ fn set_font_size(settings: &mut HentaiganaInputSettings) {
             if ok > 0.0 {
                 settings.ime_font_size = ok
             }
-        },
+        }
         Err(_) => {}
     };
 }

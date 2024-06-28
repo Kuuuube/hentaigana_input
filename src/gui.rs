@@ -24,7 +24,7 @@ impl HentaiganaInputGui {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
         }
 
-        Default::default()
+        return Default::default();
     }
 }
 

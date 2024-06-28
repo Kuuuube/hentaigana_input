@@ -3,6 +3,7 @@ pub struct HentaiganaInputSettings {
     pub dark_mode: bool,
     pub textedit_font_size: f32,
     pub ime_font_size: f32,
+    pub ime_shortcuts: bool,
 
     pub textedit_font_size_string: String,
     pub ime_font_size_string: String,
@@ -14,6 +15,7 @@ impl Default for HentaiganaInputSettings {
             dark_mode: true,
             textedit_font_size: 50.0,
             ime_font_size: 40.0,
+            ime_shortcuts: true,
 
             textedit_font_size_string: "50".to_owned(),
             ime_font_size_string: "40".to_owned(),
@@ -115,6 +117,12 @@ impl eframe::App for HentaiganaInputGui {
                                 set_font_size(&mut self.settings);
                             }
                             ui.end_row();
+
+                            ui.add(egui::Checkbox::new(
+                                &mut self.settings.ime_shortcuts,
+                                "IME Shortcuts",
+                            ));
+                            ui.end_row();
                         });
 
                         if ui.button("Reset").clicked() {
@@ -141,7 +149,9 @@ impl eframe::App for HentaiganaInputGui {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            filter_events_and_replace(self, ui, self.blocked_keys.clone());
+            if self.settings.ime_shortcuts {
+                filter_events_and_replace(self, ui, self.blocked_keys.clone());
+            }
 
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.add_sized(
@@ -160,7 +170,10 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
     let hentaigana_display =
         crate::hentaigana_dicts::get_hentaigana_display(hentaigana_input_gui.text.clone());
 
-    let button_label_width = 50.0;
+    let mut button_label_width = 50.0;
+    if !hentaigana_input_gui.settings.ime_shortcuts {
+        button_label_width *= 2.0;
+    }
     let ime_text_style = egui::TextStyle::Name("ime".into());
     let mut blocked_keys: Vec<String> = vec![];
 
@@ -168,14 +181,16 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
         blocked_keys.push(left_display.left.clone());
 
         if left_display.right.len() > 0 {
-            ui.add_sized(
-                [button_label_width, 0.0],
-                egui::Label::new(
-                    egui::RichText::new(left_display.left.clone())
-                        .text_style(ime_text_style.clone()),
-                )
-                .selectable(false),
-            );
+            if hentaigana_input_gui.settings.ime_shortcuts {
+                ui.add_sized(
+                    [button_label_width, 0.0],
+                    egui::Label::new(
+                        egui::RichText::new(left_display.left.clone())
+                            .text_style(ime_text_style.clone()),
+                    )
+                    .selectable(false),
+                );
+            }
 
             let left_selectable_label = ui.add_sized(
                 [button_label_width, 0.0],
@@ -190,11 +205,13 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             }
         } else {
             //placeholders
-            ui.add_sized(
-                [button_label_width, 0.0],
-                egui::Label::new(egui::RichText::new("").text_style(ime_text_style.clone()))
-                    .selectable(false),
-            );
+            if hentaigana_input_gui.settings.ime_shortcuts {
+                ui.add_sized(
+                    [button_label_width, 0.0],
+                    egui::Label::new(egui::RichText::new("").text_style(ime_text_style.clone()))
+                        .selectable(false),
+                );
+            }
 
             ui.add_sized(
                 [button_label_width, 0.0],
@@ -206,14 +223,16 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
         if right_display.right.len() > 0 {
             blocked_keys.push(right_display.left.clone());
 
-            ui.add_sized(
-                [button_label_width, 0.0],
-                egui::Label::new(
-                    egui::RichText::new(right_display.left.clone())
-                        .text_style(ime_text_style.clone()),
-                )
-                .selectable(false),
-            );
+            if hentaigana_input_gui.settings.ime_shortcuts {
+                ui.add_sized(
+                    [button_label_width, 0.0],
+                    egui::Label::new(
+                        egui::RichText::new(right_display.left.clone())
+                            .text_style(ime_text_style.clone()),
+                    )
+                    .selectable(false),
+                );
+            }
             let right_selectable_label = ui.add_sized(
                 [button_label_width, 0.0],
                 egui::SelectableLabel::new(

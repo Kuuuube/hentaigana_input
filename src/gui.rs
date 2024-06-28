@@ -40,17 +40,21 @@ impl eframe::App for HentaiganaInputGui {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
-                    ui.menu_button("Menu", |ui| {
-                        light_dark_buttons(self, ui);
+                    ui.menu_button("File", |ui| {
+                        if ui.button("Quit").clicked() {
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    });
 
+                    ui.menu_button("Edit", |ui| {
                         if ui.button("Clear text").clicked() {
                             self.text = "".to_owned();
                             ui.close_menu();
                         }
+                    });
 
-                        if ui.button("Quit").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                        }
+                    ui.menu_button("Settings", |ui| {
+                        light_dark_buttons(self, ui);
                     });
                 });
 

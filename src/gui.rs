@@ -141,7 +141,7 @@ impl eframe::App for HentaiganaInputGui {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            filter_events(ui, self.blocked_keys.clone());
+            filter_events_and_replace(self, ui, self.blocked_keys.clone());
 
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.add_sized(
@@ -165,9 +165,9 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
     let mut blocked_keys: Vec<String> = vec![];
 
     for (left_display, right_display) in hentaigana_display {
-        if left_display.right.len() > 0 {
-            blocked_keys.push(left_display.left.clone());
+        blocked_keys.push(left_display.left.clone());
 
+        if left_display.right.len() > 0 {
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
@@ -175,6 +175,7 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
                 )
                 .selectable(false),
             );
+
             let left_selectable_label = ui.add_sized(
                 [button_label_width, 0.0],
                 egui::SelectableLabel::new(
@@ -182,11 +183,27 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
                     egui::RichText::new(left_display.right).text_style(ime_text_style.clone()),
                 ),
             );
+
             if left_selectable_label.clicked() {
-                let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), left_display.left);
-                let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
-                hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
+                replace_text(hentaigana_input_gui, left_display.left);
             }
+        } else {
+            //placeholders
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::Label::new(
+                    egui::RichText::new("").text_style(ime_text_style.clone()),
+                )
+                .selectable(false),
+            );
+
+            ui.add_sized(
+                [button_label_width, 0.0],
+                egui::Label::new(
+                    egui::RichText::new("").text_style(ime_text_style.clone()),
+                )
+                .selectable(false),
+            );
         }
 
         if right_display.right.len() > 0 {
@@ -207,9 +224,7 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
                 ),
             );
             if right_selectable_label.clicked() {
-                let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), right_display.left);
-                let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
-                hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
+                replace_text(hentaigana_input_gui, right_display.left);
             }
         }
 
@@ -246,12 +261,13 @@ fn set_theme(ctx: &egui::Context, dark_mode: bool) {
     }
 }
 
-fn filter_events(ui: &mut egui::Ui, blocked_keys: Vec<String>) {
+fn filter_events_and_replace(hentaigana_input_gui: &mut HentaiganaInputGui, ui: &mut egui::Ui, blocked_keys: Vec<String>) {
     ui.input_mut(|i| {
         for event in &i.events {
             match event {
                 egui::Event::Text(t) => {
                     if blocked_keys.contains(t) {
+                        replace_text(hentaigana_input_gui, t.to_string());
                         i.events = vec![];
                         break;
                     }
@@ -260,6 +276,12 @@ fn filter_events(ui: &mut egui::Ui, blocked_keys: Vec<String>) {
             }
         }
     });
+}
+
+fn replace_text(hentaigana_input_gui: &mut HentaiganaInputGui, display_left: String) {
+    let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), display_left);
+    let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
+    hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
 }
 
 fn set_font_size(settings: &mut HentaiganaInputSettings) {

@@ -17,19 +17,7 @@ impl Default for HentaiganaInputGui {
 
 impl HentaiganaInputGui {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        let mut fonts = egui::FontDefinitions::default();
-        fonts.font_data.insert(
-            "BabelStoneHan".into(),
-            egui::FontData::from_owned(
-                crate::font::get_babelstonehan().expect("Could not load font"),
-            ),
-        );
-        fonts
-            .families
-            .get_mut(&egui::FontFamily::Proportional)
-            .unwrap()
-            .push("BabelStoneHan".into());
-        cc.egui_ctx.set_fonts(fonts);
+        crate::font::add_babelstonehan_font(cc);
 
         //restore state
         if let Some(storage) = cc.storage {

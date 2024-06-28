@@ -1,4 +1,20 @@
-pub fn get_babelstonehan() -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+pub fn add_babelstonehan_font(cc: &eframe::CreationContext<'_>) {
+    let mut fonts = egui::FontDefinitions::default();
+    fonts.font_data.insert(
+        "BabelStoneHan".into(),
+        egui::FontData::from_owned(
+            get_babelstonehan().expect("Could not load font"),
+        ),
+    );
+    fonts
+        .families
+        .get_mut(&egui::FontFamily::Proportional)
+        .unwrap()
+        .push("BabelStoneHan".into());
+    cc.egui_ctx.set_fonts(fonts);
+}
+
+fn get_babelstonehan() -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let font = include_bytes!("../assets/BabelStoneHan.ttf.zst");
     return Ok(decode_zstd(font)?);
 }

@@ -22,7 +22,7 @@ jobs:
 
       - name: Build
         run: |
-          cargo build --all --release
+          cargo build --release
           strip target/release/hentaigana_input
           tar -czvf target/release/hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz -C target/release/ hentaigana_input
 
@@ -32,7 +32,7 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           draft: true
-          files: hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz
+          files: target/release/hentaigana_input_${{ github.ref_name }}_linux_x64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build
         run: |
-          cargo build --all --release
+          cargo build --release
           powershell Compress-Archive target/release/hentaigana_input.exe target/release/hentaigana_input_${{ github.ref_name }}_windows_x64.zip
 
       - name: Release
@@ -58,6 +58,6 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           draft: true
-          files: hentaigana_input_${{ github.ref_name }}_windows_x64.zip
+          files: target/release/hentaigana_input_${{ github.ref_name }}_windows_x64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

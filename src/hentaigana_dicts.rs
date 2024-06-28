@@ -873,7 +873,7 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let dakuten_append = format!("{}{}", value, "゙");
-            new_dict.insert(key.to_owned().to_owned(), dakuten_append.to_owned());
+            new_dict.insert(key.to_string(), dakuten_append.to_string());
         }
         return new_dict;
     }
@@ -883,14 +883,14 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let handakuten_append = format!("{}{}", value, "゚");
-            new_dict.insert(key.to_owned().to_owned(), handakuten_append.to_owned());
+            new_dict.insert(key.to_string(), handakuten_append.to_string());
         }
         return new_dict;
     }
 
     let mut new_dict: BTreeMap<String, String> = Default::default();
     for (key, value) in output_dict.iter() {
-        new_dict.insert(key.to_owned().to_owned(), value.to_owned().to_owned());
+        new_dict.insert(key.to_string(), value.to_string());
     }
 
     return new_dict;
@@ -898,7 +898,7 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
 
 fn get_hentaigana(romaji: &str, variant: &str) -> String {
     return match get_hentaigana_group(romaji).get(variant) {
-        Some(some) => some.to_owned().to_owned(),
+        Some(some) => some.to_string(),
         None => "".to_owned(),
     };
 }
@@ -966,18 +966,16 @@ fn format_display(
             Some(some) => some,
             None => "",
         };
-        if btreemap.get(key1).unwrap_or(&"".to_owned()) != &"".to_owned() {
-            display_values.push((
-                HentaiganaDisplay {
-                    left: key1.to_owned(),
-                    right: btreemap.get(key1).unwrap_or(&"".to_owned()).to_owned(),
-                },
-                HentaiganaDisplay {
-                    left: key2.to_owned(),
-                    right: btreemap.get(key2).unwrap_or(&"".to_owned()).to_owned(),
-                },
-            ));
-        }
+        display_values.push((
+            HentaiganaDisplay {
+                left: key1.to_owned(),
+                right: btreemap.get(key1).unwrap_or(&"".to_owned()).to_owned(),
+            },
+            HentaiganaDisplay {
+                left: key2.to_owned(),
+                right: btreemap.get(key2).unwrap_or(&"".to_owned()).to_owned(),
+            },
+        ));
     }
 
     return display_values;
@@ -1002,6 +1000,7 @@ fn create_dotstring(input_string: String) -> String {
     return new_string;
 }
 
+#[derive(Debug)]
 pub struct HentaiganaDisplay {
     pub left: String,
     pub right: String,

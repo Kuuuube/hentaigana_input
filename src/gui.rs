@@ -20,7 +20,9 @@ impl HentaiganaInputGui {
         let mut fonts = egui::FontDefinitions::default();
         fonts.font_data.insert(
             "BabelStoneHan".into(),
-            egui::FontData::from_static(include_bytes!("../assets/BabelStoneHan.ttf")),
+            egui::FontData::from_owned(
+                crate::font::get_babelstonehan().expect("Could not load font"),
+            ),
         );
         fonts
             .families

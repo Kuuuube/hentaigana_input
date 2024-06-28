@@ -30,7 +30,7 @@ pub struct HentaiganaInputGui {
     #[serde(skip)]
     ime_text: String,
     #[serde(skip)]
-    blocked_keys: Vec<String>
+    blocked_keys: Vec<String>,
 }
 
 impl Default for HentaiganaInputGui {
@@ -149,7 +149,7 @@ impl eframe::App for HentaiganaInputGui {
                     egui::TextEdit::multiline(&mut self.text)
                         .lock_focus(true)
                         .font(egui::TextStyle::Name("textedit".into()))
-                        .min_size(egui::Vec2{x: 300.0, y: 300.0}),
+                        .min_size(egui::Vec2 { x: 300.0, y: 300.0 }),
                 );
             });
         });
@@ -171,7 +171,8 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
-                    egui::RichText::new(left_display.left.clone()).text_style(ime_text_style.clone()),
+                    egui::RichText::new(left_display.left.clone())
+                        .text_style(ime_text_style.clone()),
                 )
                 .selectable(false),
             );
@@ -191,18 +192,14 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             //placeholders
             ui.add_sized(
                 [button_label_width, 0.0],
-                egui::Label::new(
-                    egui::RichText::new("").text_style(ime_text_style.clone()),
-                )
-                .selectable(false),
+                egui::Label::new(egui::RichText::new("").text_style(ime_text_style.clone()))
+                    .selectable(false),
             );
 
             ui.add_sized(
                 [button_label_width, 0.0],
-                egui::Label::new(
-                    egui::RichText::new("").text_style(ime_text_style.clone()),
-                )
-                .selectable(false),
+                egui::Label::new(egui::RichText::new("").text_style(ime_text_style.clone()))
+                    .selectable(false),
             );
         }
 
@@ -212,7 +209,8 @@ fn setup_ime_labels(ui: &mut egui::Ui, hentaigana_input_gui: &mut HentaiganaInpu
             ui.add_sized(
                 [button_label_width, 0.0],
                 egui::Label::new(
-                    egui::RichText::new(right_display.left.clone()).text_style(ime_text_style.clone()),
+                    egui::RichText::new(right_display.left.clone())
+                        .text_style(ime_text_style.clone()),
                 )
                 .selectable(false),
             );
@@ -261,7 +259,11 @@ fn set_theme(ctx: &egui::Context, dark_mode: bool) {
     }
 }
 
-fn filter_events_and_replace(hentaigana_input_gui: &mut HentaiganaInputGui, ui: &mut egui::Ui, blocked_keys: Vec<String>) {
+fn filter_events_and_replace(
+    hentaigana_input_gui: &mut HentaiganaInputGui,
+    ui: &mut egui::Ui,
+    blocked_keys: Vec<String>,
+) {
     ui.input_mut(|i| {
         for event in &i.events {
             match event {
@@ -279,9 +281,14 @@ fn filter_events_and_replace(hentaigana_input_gui: &mut HentaiganaInputGui, ui: 
 }
 
 fn replace_text(hentaigana_input_gui: &mut HentaiganaInputGui, display_left: String) {
-    let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(hentaigana_input_gui.text.clone(), display_left);
+    let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(
+        hentaigana_input_gui.text.clone(),
+        display_left,
+    );
     let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
-    hentaigana_input_gui.text = re.replace(&hentaigana_input_gui.text, &replace_data.0).to_string();
+    hentaigana_input_gui.text = re
+        .replace(&hentaigana_input_gui.text, &replace_data.0)
+        .to_string();
 }
 
 fn set_font_size(settings: &mut HentaiganaInputSettings) {

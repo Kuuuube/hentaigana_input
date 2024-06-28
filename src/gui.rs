@@ -131,7 +131,8 @@ impl eframe::App for HentaiganaInputGui {
         });
 
         egui::SidePanel::new(egui::panel::Side::Right, "right_sidepanel")
-            .min_width(325.0)
+            .min_width(250.0)
+            .max_width(250.0)
             .resizable(false)
             .show(ctx, |ui| {
                 egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
@@ -147,7 +148,8 @@ impl eframe::App for HentaiganaInputGui {
                     ui.available_size(),
                     egui::TextEdit::multiline(&mut self.text)
                         .lock_focus(true)
-                        .font(egui::TextStyle::Name("textedit".into())),
+                        .font(egui::TextStyle::Name("textedit".into()))
+                        .min_size(egui::Vec2{x: 300.0, y: 300.0}),
                 );
             });
         });

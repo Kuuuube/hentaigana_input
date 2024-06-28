@@ -105,10 +105,7 @@ impl eframe::App for HentaiganaInputGui {
                             }
                             ui.end_row();
 
-                            ui.add_sized(
-                                ui.available_size(),
-                                egui::Label::new("IME Font Size:").selectable(false),
-                            );
+                            ui.add(egui::Label::new("IME Font Size:").selectable(false));
                             let response = ui.add_sized(
                                 ui.available_size(),
                                 egui::TextEdit::singleline(&mut self.settings.ime_font_size_string),

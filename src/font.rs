@@ -1,7 +1,13 @@
 pub fn set_font_styles(settings: &mut crate::gui::HentaiganaInputSettings, ctx: &egui::Context) {
     let mut style = (*ctx.style()).clone();
-    style.text_styles.insert(egui::TextStyle::Name("textedit".into()), egui::FontId::new(settings.textedit_font_size, egui::FontFamily::Proportional));
-    style.text_styles.insert(egui::TextStyle::Name("ime".into()), egui::FontId::new(settings.ime_font_size, egui::FontFamily::Proportional));
+    style.text_styles.insert(
+        egui::TextStyle::Name("textedit".into()),
+        egui::FontId::new(settings.textedit_font_size, egui::FontFamily::Proportional),
+    );
+    style.text_styles.insert(
+        egui::TextStyle::Name("ime".into()),
+        egui::FontId::new(settings.ime_font_size, egui::FontFamily::Proportional),
+    );
     ctx.set_style(style);
 }
 
@@ -9,9 +15,7 @@ pub fn add_babelstonehan_font(cc: &eframe::CreationContext<'_>) {
     let mut fonts = egui::FontDefinitions::default();
     fonts.font_data.insert(
         "BabelStoneHan".into(),
-        egui::FontData::from_owned(
-            get_babelstonehan().expect("Could not load font"),
-        ),
+        egui::FontData::from_owned(get_babelstonehan().expect("Could not load font")),
     );
     fonts
         .families

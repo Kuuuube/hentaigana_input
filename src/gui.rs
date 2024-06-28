@@ -75,6 +75,24 @@ impl eframe::App for HentaiganaInputGui {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
+            ui.input_mut(|i| {
+                let blocked_keys = vec!["!".to_owned(), "@".to_owned()];
+                i.events = i.events
+                    .iter()
+                    .filter(|x| match x {
+                        egui::Event::Text(t) => {
+                            if blocked_keys.contains(t) {
+                                return false
+                            } else {
+                                return true
+                            }
+                        }
+                        _ => return true,
+                    })
+                    .map(|x| x.to_owned())
+                    .collect();
+            });
+
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.add_sized(
                     ui.available_size(),

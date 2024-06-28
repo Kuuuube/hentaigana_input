@@ -43,6 +43,11 @@ impl eframe::App for HentaiganaInputGui {
                     ui.menu_button("Menu", |ui| {
                         light_dark_buttons(self, ui);
 
+                        if ui.button("Clear text").clicked() {
+                            self.text = "".to_owned();
+                            ui.close_menu();
+                        }
+
                         if ui.button("Quit").clicked() {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }

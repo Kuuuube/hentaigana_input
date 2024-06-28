@@ -2,6 +2,7 @@
 
 use egui;
 
+mod font;
 mod gui;
 mod hentaigana_dicts;
 mod normalize_input;

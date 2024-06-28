@@ -1,12 +1,22 @@
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct HentaiganaInputSettings {
-    dark_mode: bool,
+    pub dark_mode: bool,
+    pub textedit_font_size: f32,
+    pub ime_font_size: f32,
+
+    pub textedit_font_size_string: String,
+    pub ime_font_size_string: String,
 }
 
 impl Default for HentaiganaInputSettings {
     fn default() -> Self {
         Self {
             dark_mode: true,
+            textedit_font_size: 25.0,
+            ime_font_size: 25.0,
+
+            textedit_font_size_string: "25".to_owned(),
+            ime_font_size_string: "25".to_owned(),
         }
     }
 }
@@ -48,6 +58,7 @@ impl eframe::App for HentaiganaInputGui {
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         set_theme(ctx, self.settings.dark_mode);
+        crate::font::set_font_styles(&mut self.settings, ctx);
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -67,6 +78,28 @@ impl eframe::App for HentaiganaInputGui {
 
                     ui.menu_button("Settings", |ui| {
                         light_dark_buttons(self, ui);
+
+                        egui::Grid::new("hentaigana_selection_grid").show(ui, |ui| {
+                            ui.add_sized(ui.available_size(), egui::Label::new("Textarea Font Size:").selectable(false));
+                            let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.textedit_font_size_string));
+                            if response.changed() {
+                                match self.settings.textedit_font_size_string.parse::<f32>() {
+                                    Ok(ok) => { self.settings.textedit_font_size = ok },
+                                    Err(_) => {}
+                                };
+                            }
+                            ui.end_row();
+
+                            ui.add_sized(ui.available_size(), egui::Label::new("IME Font Size:").selectable(false));
+                            let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut self.settings.ime_font_size_string));
+                            if response.changed() {
+                                match self.settings.ime_font_size_string.parse::<f32>() {
+                                    Ok(ok) => { self.settings.ime_font_size = ok },
+                                    Err(_) => {}
+                                };
+                            }
+                            ui.end_row();
+                        });
 
                         if ui.button("Reset").clicked() {
                             self.settings = HentaiganaInputSettings::default();

@@ -79,14 +79,15 @@ impl eframe::App for HentaiganaInputGui {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.input_mut(|i| {
                 let blocked_keys = vec!["!".to_owned(), "@".to_owned()];
-                i.events = i.events
+                i.events = i
+                    .events
                     .iter()
                     .filter(|x| match x {
                         egui::Event::Text(t) => {
                             if blocked_keys.contains(t) {
-                                return false
+                                return false;
                             } else {
-                                return true
+                                return true;
                             }
                         }
                         _ => return true,

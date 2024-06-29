@@ -160,7 +160,11 @@ impl eframe::App for HentaiganaInputGui {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            if self.settings.ime_shortcuts {
+            let mut textedit_has_focus = false;
+            ctx.memory(|memory| {
+                textedit_has_focus = memory.has_focus("hentaigana_textedit".into());
+            });
+            if textedit_has_focus && self.settings.ime_shortcuts {
                 filter_events_and_replace(self, ui, self.blocked_keys.clone());
             }
 
@@ -170,7 +174,8 @@ impl eframe::App for HentaiganaInputGui {
                     egui::TextEdit::multiline(&mut self.text)
                         .lock_focus(true)
                         .font(egui::TextStyle::Name("textedit".into()))
-                        .min_size(egui::Vec2 { x: 300.0, y: 300.0 }),
+                        .min_size(egui::Vec2 { x: 300.0, y: 300.0 })
+                        .id("hentaigana_textedit".into()),
                 );
             });
         });

@@ -122,7 +122,9 @@ impl eframe::App for HentaiganaInputGui {
                             ui.add(egui::Label::new("IME Sidebar Width:").selectable(false));
                             let response = ui.add_sized(
                                 ui.available_size(),
-                                egui::TextEdit::singleline(&mut self.settings.ime_sidebar_width_string),
+                                egui::TextEdit::singleline(
+                                    &mut self.settings.ime_sidebar_width_string,
+                                ),
                             );
                             if response.changed() {
                                 set_sidebar_size(&mut self.settings);
@@ -303,7 +305,8 @@ fn filter_events_and_replace(
         for event in &i.events {
             match event {
                 egui::Event::Text(t) => {
-                    let normalized_t = crate::normalize_input::fullwidth_to_halfwidth(t.to_string());
+                    let normalized_t =
+                        crate::normalize_input::fullwidth_to_halfwidth(t.to_string());
                     if blocked_keys.contains(&normalized_t) {
                         replace_text(hentaigana_input_gui, normalized_t);
                         i.events = vec![];

@@ -14,15 +14,19 @@ pub fn set_font_styles(settings: &mut crate::gui::HentaiganaInputSettings, ctx: 
     ctx.set_style(style);
 }
 
-pub fn add_babelstonehan_font(cc: &eframe::CreationContext<'_>) {
+pub fn add_font_files(cc: &eframe::CreationContext<'_>) {
     let mut fonts = egui::FontDefinitions::default();
     fonts.font_data.insert(
         "BabelStoneHan".into(),
         egui::FontData::from_owned(get_babelstonehan().expect("Could not load font")),
     );
+    fonts.font_data.insert(
+        "Sarasa".into(),
+        egui::FontData::from_static(include_bytes!("../assets/SarasaUij-ExtraLight-Patch.ttf")),
+    );
     fonts.families.insert(
         egui::FontFamily::Name("CJK".into()),
-        vec!["BabelStoneHan".into()],
+        vec!["BabelStoneHan".into(), "Sarasa".into()],
     );
     cc.egui_ctx.set_fonts(fonts);
 }

@@ -53,7 +53,7 @@ impl Default for HentaiganaInputGui {
 
 impl HentaiganaInputGui {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        crate::font::add_babelstonehan_font(cc);
+        crate::font::add_font_files(cc);
 
         //restore state
         if let Some(storage) = cc.storage {

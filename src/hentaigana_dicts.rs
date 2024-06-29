@@ -1,4 +1,3 @@
-use regex::Regex;
 use std::collections::BTreeMap;
 
 fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
@@ -985,14 +984,7 @@ pub fn get_hentaigana_replace(
     current_text: String,
     current_char: String,
 ) -> Option<(String, String)> {
-    let text_slices = vec![
-        safe_regex_match(r".{5}$", &current_text),
-        safe_regex_match(r".{4}$", &current_text),
-        safe_regex_match(r".{3}$", &current_text),
-        safe_regex_match(r".{2}$", &current_text),
-        safe_regex_match(r".$", &current_text),
-    ];
-    for text_slice in text_slices {
+    for text_slice in get_slices(&current_text) {
         let hentaigana_group = get_hentaigana_group(&text_slice);
         if hentaigana_group != BTreeMap::default() {
             let hentaigana_result = get_hentaigana(&text_slice, &current_char);
@@ -1009,15 +1001,7 @@ pub fn get_hentaigana_replace(
 }
 
 pub fn get_hentaigana_display(current_text: String) -> Vec<(HentaiganaDisplay, HentaiganaDisplay)> {
-    let text_slices = vec![
-        safe_regex_match(r".{5}$", &current_text),
-        safe_regex_match(r".{4}$", &current_text),
-        safe_regex_match(r".{3}$", &current_text),
-        safe_regex_match(r".{2}$", &current_text),
-        safe_regex_match(r".$", &current_text),
-    ];
-
-    for text_slice in text_slices {
+    for text_slice in get_slices(&current_text) {
         let hentaigana_group = get_hentaigana_group(&text_slice);
         if hentaigana_group != BTreeMap::default() {
             return format_display(hentaigana_group);
@@ -1062,15 +1046,19 @@ fn format_display(
     return display_values;
 }
 
-fn safe_regex_match(regex_string: &str, search_string: &str) -> String {
-    let re = Regex::new(regex_string).unwrap();
-    return match re.captures(&search_string) {
-        Some(some) => match some.get(0) {
-            Some(some) => some.as_str().to_string(),
-            None => "".to_string(),
-        },
-        None => "".to_string(),
-    };
+fn get_slices(current_text: &str) -> Vec<String> {
+    let chars: Vec<char> = current_text.chars().collect();
+    let text_length_chars = chars.len();
+    let longest_slice = 5;
+    let mut text_slices = vec![];
+    for i in 1..=longest_slice {
+        if i <= text_length_chars {
+            let (_first, last) = chars.split_at(text_length_chars - i);
+            text_slices.push(last.into_iter().collect());
+        }
+    }
+    text_slices.reverse();
+    return text_slices;
 }
 
 fn create_dotstring(input_string: String) -> String {

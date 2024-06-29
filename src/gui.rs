@@ -84,6 +84,11 @@ impl eframe::App for HentaiganaInputGui {
                     });
 
                     ui.menu_button("Edit", |ui| {
+                        if ui.button("Copy text").clicked() {
+                            ui.output_mut(|o| o.copied_text = self.text.clone());
+                            ui.close_menu();
+                        }
+
                         if ui.button("Clear text").clicked() {
                             self.text = "".to_owned();
                             ui.close_menu();

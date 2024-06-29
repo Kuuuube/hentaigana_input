@@ -320,17 +320,16 @@ fn filter_events_and_replace(
 }
 
 fn replace_text(hentaigana_input_gui: &mut HentaiganaInputGui, display_left: String) {
-    let replace_data = match crate::hentaigana_dicts::get_hentaigana_replace(
+    let (replace_data, replace_len) = match crate::hentaigana_dicts::get_hentaigana_replace(
         hentaigana_input_gui.text.clone(),
         display_left,
     ) {
         Some(some) => some,
         None => return,
     };
-    let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
-    hentaigana_input_gui.text = re
-        .replace(&hentaigana_input_gui.text, &replace_data.0)
-        .to_string();
+    let chars: Vec<char> = hentaigana_input_gui.text.chars().collect();
+    let (first, _last) = chars.split_at(chars.len() - replace_len);
+    hentaigana_input_gui.text = first.into_iter().collect::<String>() + &replace_data;
 }
 
 fn set_font_size(settings: &mut HentaiganaInputSettings) {

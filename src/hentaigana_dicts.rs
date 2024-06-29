@@ -983,7 +983,7 @@ fn get_hentaigana(romaji: &str, variant: &str) -> String {
 pub fn get_hentaigana_replace(
     current_text: String,
     current_char: String,
-) -> Option<(String, String)> {
+) -> Option<(String, usize)> {
     for text_slice in get_slices(&current_text) {
         let hentaigana_group = get_hentaigana_group(&text_slice);
         if hentaigana_group != BTreeMap::default() {
@@ -991,7 +991,7 @@ pub fn get_hentaigana_replace(
             if hentaigana_result != "".to_owned() {
                 return Some((
                     get_hentaigana(&text_slice, &current_char),
-                    create_dotstring(text_slice),
+                    text_slice.chars().collect::<Vec<char>>().len(),
                 ));
             }
         }
@@ -1059,14 +1059,6 @@ fn get_slices(current_text: &str) -> Vec<String> {
     }
     text_slices.reverse();
     return text_slices;
-}
-
-fn create_dotstring(input_string: String) -> String {
-    let mut new_string = "".to_string();
-    for _ in 0..input_string.len() {
-        new_string += ".";
-    }
-    return new_string;
 }
 
 #[derive(Debug)]

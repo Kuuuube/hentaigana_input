@@ -320,10 +320,13 @@ fn filter_events_and_replace(
 }
 
 fn replace_text(hentaigana_input_gui: &mut HentaiganaInputGui, display_left: String) {
-    let replace_data = crate::hentaigana_dicts::get_hentaigana_replace(
+    let replace_data = match crate::hentaigana_dicts::get_hentaigana_replace(
         hentaigana_input_gui.text.clone(),
         display_left,
-    );
+    ) {
+        Some(some) => some,
+        None => return,
+    };
     let re = regex::Regex::new(&(replace_data.1 + "$")).unwrap();
     hentaigana_input_gui.text = re
         .replace(&hentaigana_input_gui.text, &replace_data.0)

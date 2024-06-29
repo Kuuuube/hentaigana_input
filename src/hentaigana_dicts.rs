@@ -977,36 +977,39 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
 fn get_hentaigana(romaji: &str, variant: &str) -> String {
     return match get_hentaigana_group(romaji).get(variant) {
         Some(some) => some.to_string(),
-        None => "".to_owned(),
+        None => "".to_string(),
     };
 }
 
-pub fn get_hentaigana_replace(current_text: String, current_char: String) -> (String, String) {
-    let regex_matches = vec![
+pub fn get_hentaigana_replace(
+    current_text: String,
+    current_char: String,
+) -> Option<(String, String)> {
+    let text_slices = vec![
         safe_regex_match(r".{5}$", &current_text),
         safe_regex_match(r".{4}$", &current_text),
         safe_regex_match(r".{3}$", &current_text),
         safe_regex_match(r".{2}$", &current_text),
         safe_regex_match(r".$", &current_text),
     ];
-    for regex_match in regex_matches {
-        let hentaigana_group = get_hentaigana_group(&regex_match);
+    for text_slice in text_slices {
+        let hentaigana_group = get_hentaigana_group(&text_slice);
         if hentaigana_group != BTreeMap::default() {
-            let hentaigana_result = get_hentaigana(&regex_match, &current_char);
+            let hentaigana_result = get_hentaigana(&text_slice, &current_char);
             if hentaigana_result != "".to_owned() {
-                return (
-                    get_hentaigana(&regex_match, &current_char),
-                    create_dotstring(regex_match),
-                );
+                return Some((
+                    get_hentaigana(&text_slice, &current_char),
+                    create_dotstring(text_slice),
+                ));
             }
         }
     }
 
-    return ("No_match_found.".to_string(), "No_match_found.".to_string());
+    return None;
 }
 
 pub fn get_hentaigana_display(current_text: String) -> Vec<(HentaiganaDisplay, HentaiganaDisplay)> {
-    let regex_matches = vec![
+    let text_slices = vec![
         safe_regex_match(r".{5}$", &current_text),
         safe_regex_match(r".{4}$", &current_text),
         safe_regex_match(r".{3}$", &current_text),
@@ -1014,8 +1017,8 @@ pub fn get_hentaigana_display(current_text: String) -> Vec<(HentaiganaDisplay, H
         safe_regex_match(r".$", &current_text),
     ];
 
-    for regex_match in regex_matches {
-        let hentaigana_group = get_hentaigana_group(&regex_match);
+    for text_slice in text_slices {
+        let hentaigana_group = get_hentaigana_group(&text_slice);
         if hentaigana_group != BTreeMap::default() {
             return format_display(hentaigana_group);
         }

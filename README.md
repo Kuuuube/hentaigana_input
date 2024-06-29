@@ -4,7 +4,7 @@ Input method for archaic Japanese characters.
 
 ## Usage
 
-- Run `hentaigana_input`.
+- Download from [releases](https://github.com/Kuuuube/hentaigana_input/releases/latest) and run `hentaigana_input` or use the web app here [Hentaigana Input](https://kuuuube.github.io/hentaigana_input/).
 
 - Type the romaji for a character corresponding to a [dictionary value](./docs/key.md).
 

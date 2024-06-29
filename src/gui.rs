@@ -89,10 +89,12 @@ impl eframe::App for HentaiganaInputGui {
                             ui.close_menu();
                         }
 
-                        if ui.button("Clear text").clicked() {
-                            self.text = "".to_owned();
-                            ui.close_menu();
-                        }
+                        ui.menu_button("Clear text", |ui| {
+                            if ui.button("Confirm").clicked() {
+                                self.text = "".to_owned();
+                                ui.close_menu();
+                            }
+                        });
                     });
 
                     ui.menu_button("Settings", |ui| {
@@ -143,10 +145,12 @@ impl eframe::App for HentaiganaInputGui {
                             ui.end_row();
                         });
 
-                        if ui.button("Reset").clicked() {
-                            self.settings = HentaiganaInputSettings::default();
-                            ui.close_menu();
-                        }
+                        ui.menu_button("Reset", |ui| {
+                            if ui.button("Confirm").clicked() {
+                                self.settings = HentaiganaInputSettings::default();
+                                ui.close_menu();
+                            }
+                        });
                     });
                 });
 

@@ -1049,12 +1049,12 @@ fn format_display(
         };
         display_values.push((
             HentaiganaDisplay {
-                left: key1.to_owned(),
-                right: btreemap.get(key1).unwrap_or(&"".to_owned()).to_owned(),
+                left: key1.to_string(),
+                right: btreemap.get(key1).unwrap_or(&"".to_string()).to_string(),
             },
             HentaiganaDisplay {
-                left: key2.to_owned(),
-                right: btreemap.get(key2).unwrap_or(&"".to_owned()).to_owned(),
+                left: key2.to_string(),
+                right: btreemap.get(key2).unwrap_or(&"".to_string()).to_string(),
             },
         ));
     }
@@ -1066,10 +1066,10 @@ fn safe_regex_match(regex_string: &str, search_string: &str) -> String {
     let re = Regex::new(regex_string).unwrap();
     return match re.captures(&search_string) {
         Some(some) => match some.get(0) {
-            Some(some) => some.as_str().to_owned(),
-            None => "".to_owned(),
+            Some(some) => some.as_str().to_string(),
+            None => "".to_string(),
         },
-        None => "".to_owned(),
+        None => "".to_string(),
     };
 }
 

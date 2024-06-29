@@ -911,30 +911,57 @@ fn get_hentaigana_group(romaji: &str) -> BTreeMap<String, String> {
 
     let lowered_romaji = romaji.to_lowercase();
 
-    let output_dict = match romaji_dict.get(lowered_romaji.as_str()) {
-        Some(some) => some.to_owned().to_owned(),
+    let output_dict = match romaji_dict.get(&lowered_romaji) {
+        Some(some) => some.to_owned(),
         None => BTreeMap::default(),
     };
 
     let dakuten = vec![
-        "ga", "gi", "gu", "ge", "go", "za", "ji", "zi", "zu", "ze", "zo", "da", "di", "du", "de",
-        "do", "ba", "bi", "bu", "be", "bo", "vu", "goto",
+        "ga".to_string(),
+        "gi".to_string(),
+        "gu".to_string(),
+        "ge".to_string(),
+        "go".to_string(),
+        "za".to_string(),
+        "ji".to_string(),
+        "zi".to_string(),
+        "zu".to_string(),
+        "ze".to_string(),
+        "zo".to_string(),
+        "da".to_string(),
+        "di".to_string(),
+        "du".to_string(),
+        "de".to_string(),
+        "do".to_string(),
+        "ba".to_string(),
+        "bi".to_string(),
+        "bu".to_string(),
+        "be".to_string(),
+        "bo".to_string(),
+        "vu".to_string(),
+        "goto".to_string(),
     ];
-    if dakuten.contains(&lowered_romaji.as_str()) {
+    if dakuten.contains(&lowered_romaji) {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let dakuten_append = format!("{}{}", value, "゙");
-            new_dict.insert(key.to_string(), dakuten_append.to_string());
+            new_dict.insert(key.to_string(), dakuten_append);
         }
         return new_dict;
     }
 
-    let handakuten = vec!["pa", "pi", "pu", "pe", "po"];
-    if handakuten.contains(&lowered_romaji.as_str()) {
+    let handakuten = vec![
+        "pa".to_string(),
+        "pi".to_string(),
+        "pu".to_string(),
+        "pe".to_string(),
+        "po".to_string(),
+    ];
+    if handakuten.contains(&lowered_romaji) {
         let mut new_dict: BTreeMap<String, String> = Default::default();
         for (key, value) in output_dict.iter() {
             let handakuten_append = format!("{}{}", value, "゚");
-            new_dict.insert(key.to_string(), handakuten_append.to_string());
+            new_dict.insert(key.to_string(), handakuten_append);
         }
         return new_dict;
     }

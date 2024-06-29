@@ -1,7 +1,5 @@
 #![windows_subsystem = "windows"]
 
-use egui;
-
 mod font;
 mod gui;
 mod hentaigana_dicts;

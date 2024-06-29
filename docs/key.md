@@ -726,7 +726,7 @@ Dakuten/Handakuten are not shown here but are automatically applied in the progr
 - 〽
 
 
-## `.` `,`
+## `.` `,` `dot` `maru` `ten`
 -  ゙
 -  ゚
 - ゛

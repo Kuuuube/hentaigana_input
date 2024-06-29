@@ -18,11 +18,11 @@ pub fn add_font_files(cc: &eframe::CreationContext<'_>) {
     let mut fonts = egui::FontDefinitions::default();
     fonts.font_data.insert(
         "BabelStoneHan".into(),
-        egui::FontData::from_owned(get_babelstonehan().expect("Could not load font")),
+        egui::FontData::from_owned(get_babelstonehan().expect("Could not load babelstonehan font")),
     );
     fonts.font_data.insert(
         "Sarasa".into(),
-        egui::FontData::from_static(include_bytes!("../assets/SarasaUij-ExtraLight-Patch.ttf")),
+        egui::FontData::from_owned(get_sarasa().expect("Could not load sarasa font")),
     );
     fonts.families.insert(
         egui::FontFamily::Name("CJK".into()),
@@ -33,6 +33,11 @@ pub fn add_font_files(cc: &eframe::CreationContext<'_>) {
 
 fn get_babelstonehan() -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let font = include_bytes!("../assets/BabelStoneHan.ttf.zst");
+    return Ok(decode_zstd(font)?);
+}
+
+fn get_sarasa() -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let font = include_bytes!("../assets/SarasaUij-ExtraLight-Patch.ttf.zst");
     return Ok(decode_zstd(font)?);
 }
 
